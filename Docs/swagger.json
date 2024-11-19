@@ -3,5 +3,41 @@
     "info": {
         "title": "MotivatsiooniApi",
         "version": "1.0.0"
+    },
+    "paths": {
+        "/categories": {
+            "get": {
+                "tags": [
+                    "categories"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "examples": {
+                                    "list of categories": {
+                                        "value": [
+                                            "For men",
+                                            "For women",
+                                            "Religious",
+                                            "For All"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Retorns a list of categories"
+                    }
+                },
+                "summary": "get list of all categories from api",
+                "description": "Returns a list of all categories in the api."
+            }
+        }
     }
 }
