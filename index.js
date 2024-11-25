@@ -26,7 +26,7 @@ const quotes =[
 app.get("/quotes", (req, res) => { res.send (quotes)})
 
 app.get("/quotes/:id", (req, res) => {
-    res.send(quotes[req.params.id])
+    res.send(quotes[req.params.id - 1])
 })
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
