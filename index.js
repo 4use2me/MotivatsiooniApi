@@ -26,6 +26,9 @@ const quotes =[
 app.get("/quotes", (req, res) => { res.send (quotes)})
 
 app.get("/quotes/:id", (req, res) => {
+    if (typeof quotes[req.params.id - 1] === "undefined") {
+        return res.status(404).send("Quote not found.")
+    }
     res.send(quotes[req.params.id - 1])
 })
 
