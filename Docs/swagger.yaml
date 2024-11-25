@@ -16,13 +16,11 @@ paths:
                                 items:
                                     type: string
                             examples:
-                                list of categories:
+                                List of quotes:
                                     value:
-                                        - For men
-                                        - For women
-                                        - Religious
-                                        - For All
-                    description: Retorns a list of categories
+                                        - esimene tsitaat
+                                        - teine tsitaat
+                    description: Returns a list of quotes
             summary: get list of all quotes from api
             description: Returns a list of all quotes in the api.
         post:
