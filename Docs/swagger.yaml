@@ -1,0 +1,154 @@
+openapi: 3.0.2
+info:
+    title: MotivatsiooniApi
+    version: 1.0.0
+paths:
+    /quotes:
+        get:
+            tags:
+                - quotes
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                list of categories:
+                                    value:
+                                        - For men
+                                        - For women
+                                        - Religious
+                                        - For All
+                    description: Retorns a list of categories
+            summary: get list of all quotes from api
+            description: Returns a list of all quotes in the api.
+        post:
+            requestBody:
+                description: Data of quote that the user wants to add
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Quote'
+                        examples:
+                            Example of a quote:
+                                value:
+                                    Quote: kolmas tsitaat
+                                    Date: 24.11.2024
+                                    UserID: '1'
+                                    Likes: '0'
+                required: true
+            tags:
+                - quotes
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Quote that is added:
+                                    value:
+                                        ID: 3
+                                        Quote: kolmas tsitaat
+                                        Date: 24.11.2024
+                                        UserID: '1'
+                                        Likes: '0'
+                    description: 'Return code 201 to the user, if creation of new quote was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value:
+                                        -
+                                            error: One or multiple parameters missing
+                    description: 'Return code 404 to the user, if one or multiple parameters '
+            summary: add new quote
+            description: Adds a new quote into the array
+    '/quotes/{id}':
+        get:
+            tags:
+                - quotes
+            parameters:
+                -
+                    examples:
+                        Example of id of a quote.:
+                            value: '1'
+                    name: id
+                    description: Id of a quote the user has requested.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a quote with details:
+                                    value:
+                                        ID: 2
+                                        Quote: teine tsitaat
+                                        Date: 25.11.2024
+                                        UserID: 1
+                                        Likes: 9
+                    description: Returns details of a quote to the user
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Quote/w+ was not found:
+                                    value:
+                                        -
+                                            error: Quote\w+ was not found in quote array.
+                    description: Return error 404 to the user if quote with id is not found
+            summary: Get full details of a quote.
+            description: |
+                Returns full details of a given quote.
+        parameters:
+            -
+                name: id
+                in: path
+                required: true
+components:
+    schemas:
+        error:
+            title: Root Type for error
+            description: ''
+            type: object
+            properties:
+                error:
+                    type: string
+            example:
+                error: Error message.
+        Quote:
+            title: Root Type for Quote
+            description: Example of a valid quote
+            type: object
+            properties:
+                Quote:
+                    type: string
+                Date:
+                    type: string
+                UserID:
+                    type: string
+                Likes:
+                    type: string
+            example:
+                Quote: kolmas tsitaat
+                Date: 24.11.2024
+                UserID: '1'
+                Likes: '0'

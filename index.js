@@ -1,11 +1,13 @@
 const app = require('express')();
 const port = 8080;
+const yamljs = require('yamljs');
+const swaggerUI = require('swagger-ui-express');
+const swaggerDoc = yamljs.load("./docs/swagger.yaml");
+var express = require('express');
 
-const swaggerUI = require
-('swagger-ui-express');
-const swaggerDoc = require("./docs/swagger.json");
-app.use("/docs", swaggerUI.serve,
-swaggerUI.setup(swaggerDoc));
+app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
+app.use(express.json());
+
 
 const quotes =[
     {
@@ -29,8 +31,43 @@ app.get("/quotes/:id", (req, res) => {
     if (typeof quotes[req.params.id - 1] === "undefined") {
         return res.status(404).send("Quote not found.")
     }
+    if (req.params.id === null) {
+        return res.status(400).send
+        ({error: "Invalid quote ID"});
+    }
     res.send(quotes[req.params.id - 1])
+})
+
+app.post("/quotes", (req, res) => {
+    if (!req.body.Quote ||
+    !req.body.Date ||
+    !req.body.UserID ||
+    !req.body.Likes) 
+    {   
+        console.log(req.body.Quote)
+        console.log(req.body.Date)
+        console.log(req.body.UserID)
+        console.log(req.body.Likes)
+        return res.status(400).send
+        ({error: "One or multiple parameters are missing"});
+    }
+
+    let quote = {
+        ID: quotes.length + 1,
+        Quote: req.body.Quote,
+        Date: req.body.Date,
+        UserID: req.body.UserID,
+        Likes: req.body.Likes 
+    }
+    quotes.push(quote)
+    res.status(201)
+    .location(`${getBaseURL(req)}/quotes/${quotes.length}`)
+    .send(quote);
 })
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
+function getBaseURL(req) {
+    return req.connection && req.connection.encrypted ?
+    "https" : "http" + `//${req.headers.host}` ;
+}

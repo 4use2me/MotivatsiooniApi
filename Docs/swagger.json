@@ -8,7 +8,7 @@
         "/categories": {
             "get": {
                 "tags": [
-                    "categories"
+                    "quotes"
                 ],
                 "responses": {
                     "200": {
@@ -21,22 +21,20 @@
                                     }
                                 },
                                 "examples": {
-                                    "list of categories": {
+                                    "List of quotes": {
                                         "value": [
-                                            "For men",
-                                            "For women",
-                                            "Religious",
-                                            "For All"
+                                            "esimene tsitaat",
+                                            "teine tsitaat"
                                         ]
                                     }
                                 }
                             }
                         },
-                        "description": "Retorns a list of categories"
+                        "description": "Returns a list of quotes"
                     }
                 },
-                "summary": "get list of all categories from api",
-                "description": "Returns a list of all categories in the api."
+                "summary": "get list of all quotes from api",
+                "description": "Returns a list of all quotes in the api."
             }
         }
     }
