@@ -7,11 +7,27 @@ const swaggerDoc = require("./docs/swagger.json");
 app.use("/docs", swaggerUI.serve,
 swaggerUI.setup(swaggerDoc));
 
-app.get("/categories", (req, res) => { res.send
-    ([
-        ["For men", "For women"]
-    ])})
+const quotes =[
+    {
+        ID: 1,
+        Quote:"esimene tsitaat",
+        Date: "25.11.2024",
+        UserID: 1,
+        Likes: 10
+    },
+    {
+        ID: 2,
+        Quote:"teine tsitaat",
+        Date: "25.11.2024",
+        UserID: 1,
+        Likes: 9
+    }
+]
+app.get("/quotes", (req, res) => { res.send (quotes)})
 
-Tabnine | Edit | Test | Explain | Document | Ask
+app.get("/quotes/:id", (req, res) => {
+    res.send(quotes[req.params.id])
+})
+
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
