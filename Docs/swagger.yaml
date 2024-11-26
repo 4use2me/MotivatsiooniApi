@@ -16,11 +16,13 @@ paths:
                                 items:
                                     type: string
                             examples:
-                                List of quotes:
+                                list of categories:
                                     value:
-                                        - esimene tsitaat
-                                        - teine tsitaat
-                    description: Returns a list of quotes
+                                        - For men
+                                        - For women
+                                        - Religious
+                                        - For All
+                    description: Retorns a list of categories
             summary: get list of all quotes from api
             description: Returns a list of all quotes in the api.
         post:
@@ -57,17 +59,6 @@ paths:
                                         UserID: '1'
                                         Likes: '0'
                     description: 'Return code 201 to the user, if creation of new quote was successful'
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing parameters:
-                                    value:
-                                        -
-                                            error: One or multiple parameters missing
-                    description: 'Return code 404 to the user, if one or multiple parameters '
             summary: add new quote
             description: Adds a new quote into the array
     '/quotes/{id}':
@@ -116,6 +107,77 @@ paths:
             summary: Get full details of a quote.
             description: |
                 Returns full details of a given quote.
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Quote'
+                        examples:
+                            Example:
+                                value:
+                                    ID: '3'
+                                    Quote: kolmas tsitaat
+                                    Date: 24.11.2024
+                                    UserID: '1'
+                                    Likes: '0'
+                required: true
+            tags:
+                - quotes
+            parameters:
+                -
+                    examples:
+                        id of quote:
+                            value: '1'
+                    name: id
+                    description: id of quote to be updated
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a modified quote:
+                                    value:
+                                        ID: '3'
+                                        Quote: kolmas tsitaat
+                                        Date: 24.11.2024
+                                        UserID: '1'
+                                        Likes: '0'
+                    description: Returns the modified quote to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: |-
+                                        [
+                                            {
+                                                2error": One or multiple parameters are missing"
+                                            }
+                                        ]
+                    description: User has not addedrequired parameters to the modified quote
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing quote:
+                                    value:
+                                        -
+                                            error: Quote\w+ was not found in quote array.
+                    description: Return error 404 to the user if quote with id is not found
+            description: 'Returns updated quote, when modification of a quote is successful'
         parameters:
             -
                 name: id
