@@ -25,6 +25,8 @@ const quotes =[
         Likes: 9
     }
 ]
+
+
 app.get("/quotes", (req, res) => { res.send (quotes)})
 
 app.get("/quotes/:id", (req, res) => {
@@ -120,3 +122,42 @@ function getBaseURL(req) {
     return req.connection && req.connection.encrypted ?
     "https" : "http" + `//${req.headers.host}` ;
 }
+
+//Add new user
+app.post("/users", (req, res) => {
+    const { User, MotivationID, Date, UserName, Password } = req.body;
+
+    // Check for missing fields
+    if (!User || !MotivationID || !Date || !UserName || !Password) {
+        console.log({ User, MotivationID, Date, UserName, Password });
+        return res.status(400).send({
+            error: "One or multiple parameters are missing"
+        });
+    }
+
+    // Parse MotivationID as integer
+    const motivationID = parseInt(MotivationID, 10);
+    if (isNaN(motivationID)) {
+        return res.status(400).send({
+            error: "MotivationID must be an integer"
+        });
+    }
+
+    // Create new user object
+    const newUser = {
+        ID: users.length + 1, // Incremental ID
+        User,
+        MotivationID: motivationID,
+        Date,
+        UserName,
+        Password
+    };
+
+    // Add the user to the users array
+    users.push(newUser);
+
+    // Respond with created user
+    res.status(201)
+        .location(`${getBaseURL(req)}/users/${newUser.ID}`)
+        .send(newUser);
+});
