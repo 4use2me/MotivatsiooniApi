@@ -188,6 +188,17 @@ const ownerships =[
 
 app.get("/ownerships", (req, res) => { res.send (ownerships)}) 
 
+app.get("/ownership/:id", (req, res) => {
+    if (typeof ownerships[req.params.id - 1] === "undefined") {
+        return res.status(404).send("Ownership not found.")
+    }
+    if (req.params.id === null) {
+        return res.status(400).send
+        ({error: "Invalid ownership ID"});
+    }
+    res.send(ownerships[req.params.id - 1])
+})
+
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
 function getBaseURL(req) {

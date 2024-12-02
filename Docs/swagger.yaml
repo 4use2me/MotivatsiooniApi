@@ -392,10 +392,127 @@ paths:
                     in: path
                     required: true
             responses:
-                '201': {}
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                ' Example of a modified user':
+                                    value:
+                                        ID: 2
+                                        MotivationID: 1
+                                        Date: 02.12.2024
+                                        UserName: Aigi
+                                        Password: Aigi321
+                    description: Returns the modified user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: User has not added required parameters to the modified user
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing user:
+                                    value: 'error: "User not found"'
+                    description: The user to be updated is not found in the array
             summary: Update a user
             description: 'Returns updated user, when modification of a user is successful'
-    '/ownerships/{id}': {}
+        delete:
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of the users id:
+                            value: '1'
+                    name: id
+                    description: Id of a requested user
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value:
+                                        error: no connect
+                    description: Return status 204 upon successful deletion of an user
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing user:
+                                    value: 'error: "User not found"'
+                    description: Return error 404 if the user with id is not found
+            summary: Delete a specific user
+            description: Deletes a user from the array based on given id
+    '/ownerships/{id}':
+        get:
+            tags:
+                - ownership
+            parameters:
+                -
+                    examples:
+                        Example of id of a ownership:
+                            value: '1'
+                    name: id
+                    description: Id of a ownership the user has requested.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a ownership with details:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: Returns details of a ownership to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid ownership id:
+                                    value: 'error: "Invalid id inserted"'
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Quote/w+ was not found:
+                                    value: 'error: "Ownership\\w+ was not found in ownership array."'
+                    description: Return error 404 to the user if ownership with id is not found
+            summary: Get full details of a ownership
+            description: Returns full details of a given ownership
 components:
     schemas:
         error:
