@@ -293,7 +293,27 @@ paths:
                     description: 'Return status 400 to the user, if one or multiple of parameters are missing'
             summary: Add new user
             description: Adds a new user into the list.
-    '/users/{id}/':
+    /ownerships:
+        get:
+            tags:
+                - ownerships
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of ownerships:
+                                    value:
+                                        - 1
+                                        - 2
+                    description: Returns a list of ownerships
+            summary: get list of all ownerships from api
+            description: Returns a list of all ownerships in the api.
+    '/users/{id}':
         get:
             tags:
                 - users
@@ -375,6 +395,7 @@ paths:
                 '201': {}
             summary: Update a user
             description: 'Returns updated user, when modification of a user is successful'
+    '/ownerships/{id}': {}
 components:
     schemas:
         error:

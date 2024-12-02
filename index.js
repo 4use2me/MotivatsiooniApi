@@ -172,6 +172,22 @@ app.put("/users/:id", (req, res) => {
         .send(updatedUser);
 });
 
+// Methods of ownerships  
+const ownerships =[
+    {
+        ID: 1,
+        MotivationID:1,
+        UserID: 1  
+    },
+    {
+        ID: 2,
+        MotivationID:2,
+        UserID: 1  
+    }
+]
+
+app.get("/ownerships", (req, res) => { res.send (ownerships)}) 
+
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
 function getBaseURL(req) {
