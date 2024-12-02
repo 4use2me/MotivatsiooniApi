@@ -187,6 +187,16 @@ paths:
             summary: Update a quote
             description: 'Returns updated quote, when modification of a quote is successful'
         delete:
+            requestBody:
+                description: Id of quote is to be deleted
+                content:
+                    application/json:
+                        schema:
+                            type: integer
+                        examples:
+                            Id of quote to be deleted:
+                                value: '1'
+                required: true
             tags:
                 - quotes
             parameters:
@@ -203,17 +213,14 @@ paths:
             responses:
                 '204':
                     content:
-                        application/json: {}
-                    description: 'Return status code 204 to the user, upon successful deletion of a quote'
-                '400':
-                    content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
                             examples:
-                                Missing parameters:
-                                    value: 'error: "One or multiple parameters are missing"'
-                    description: User has not added required parameters to the modified quote
+                                successful error:
+                                    value:
+                                        error: no content
+                    description: 'Return status code 204 to the user, upon successful deletion of a quote'
                 '404':
                     content:
                         application/json:
@@ -223,13 +230,17 @@ paths:
                                 Missing quote:
                                     value: 'error: "Quote not found"'
                     description: Return error 404 to the user if quote with id is not found
-            summary: Delete a quote
-            description: Deletes a quote
+            summary: Delete a specific quote
+            description: Deletes a quote from the array based on given id
         parameters:
             -
                 name: id
                 in: path
                 required: true
+    /users:
+        get:
+            summary: get list of all users from api
+            description: Returns a list of all users in the api.
 components:
     schemas:
         error:

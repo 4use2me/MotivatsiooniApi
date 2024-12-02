@@ -110,7 +110,7 @@ app.delete("/quotes/:id", (req, res) => {
     }
 
     quotes.splice(quoteIndex, 1); // Kustuta tsitaat
-    res.status(204).send(); // Tagasta 204 ilma sisuta
+    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
 });
 
 
