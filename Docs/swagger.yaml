@@ -187,16 +187,6 @@ paths:
             summary: Update a quote
             description: 'Returns updated quote, when modification of a quote is successful'
         delete:
-            requestBody:
-                description: Id of quote is to be deleted
-                content:
-                    application/json:
-                        schema:
-                            type: integer
-                        examples:
-                            Id of quote to be deleted:
-                                value: '1'
-                required: true
             tags:
                 - quotes
             parameters:
@@ -239,8 +229,25 @@ paths:
                 required: true
     /users:
         get:
+            tags:
+                - users
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of users:
+                                    value:
+                                        - Pia
+                                        - Aigi
+                    description: Returns a list of users
             summary: get list of all users from api
             description: Returns a list of all users in the api.
+        post: {}
 components:
     schemas:
         error:

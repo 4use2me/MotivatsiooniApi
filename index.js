@@ -8,7 +8,7 @@ var express = require('express');
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
-
+// Methods of quotes
 const quotes =[
     {
         ID: 1,
@@ -113,6 +113,8 @@ app.delete("/quotes/:id", (req, res) => {
     res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
 });
 
+// Methods of users  
+app.get("/users", (req, res) => { res.send (users)})  
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
