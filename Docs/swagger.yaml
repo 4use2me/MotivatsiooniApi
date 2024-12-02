@@ -247,7 +247,89 @@ paths:
                     description: Returns a list of users
             summary: get list of all users from api
             description: Returns a list of all users in the api.
-        post: {}
+        post:
+            tags:
+                - users
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Added user:
+                                    value:
+                                        ID: 3
+                                        MotivationID: 4
+                                        Date: 24.11.2024
+                                        UserName: Aigi
+                                        Password: Qwerty1
+                    description: 'Return code 201, if creation of new user was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
+            summary: Add new user
+            description: Adds a new user into the list.
+    '/users/{id}/':
+        get:
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of id of a user.:
+                            value: '1'
+                    name: id
+                    description: Id of a user.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a user with details:
+                                    value:
+                                        ID: 2
+                                        MotivationID: 1
+                                        Date: 02.12.2024
+                                        UserName: Aigi
+                                        Password: Aigi123
+                    description: Returns details of a user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid user id:
+                                    value: 'error: "Invalid id inserted"'
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User/w+ was not found:
+                                    value: 'error: "User\\w+ was not found in user array."'
+                    description: Return error 404 to the user if user with id is not found
+            summary: Get full details of a user.
+            description: Returns full details of a given user.
 components:
     schemas:
         error:

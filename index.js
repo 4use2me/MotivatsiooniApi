@@ -116,6 +116,17 @@ app.delete("/quotes/:id", (req, res) => {
 // Methods of users  
 app.get("/users", (req, res) => { res.send (users)})  
 
+app.get("/users/:id", (req, res) => {
+    if (typeof users[req.params.id - 1] === "undefined") {
+        return res.status(404).send("User not found.")
+    }
+    if (req.params.id === null) {
+        return res.status(400).send
+        ({error: "Invalid user ID"});
+    }
+    res.send(users[req.params.id - 1])
+})
+
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
 function getBaseURL(req) {
