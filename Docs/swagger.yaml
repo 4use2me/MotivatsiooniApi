@@ -248,6 +248,21 @@ paths:
             summary: get list of all users from api
             description: Returns a list of all users in the api.
         post:
+            requestBody:
+                description: User data
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            Example of a user:
+                                value:
+                                    ID: 3
+                                    MotivationID: 4
+                                    Date: 24.11.2024
+                                    UserName: Aigi
+                                    Password: Qwerty1
+                required: true
             tags:
                 - users
             responses:
@@ -330,6 +345,69 @@ paths:
                     description: Return error 404 to the user if user with id is not found
             summary: Get full details of a user.
             description: Returns full details of a given user.
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+                        examples:
+                            Example of a user:
+                                value:
+                                    ID: 2
+                                    MotivationID: 1
+                                    Date: 02.12.2024
+                                    UserName: Aigi
+                                    Password: Aigi123
+                required: true
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of id of a user.:
+                            value: '1'
+                    name: id
+                    description: id of user to be updated
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                ' Example of a modified user':
+                                    value:
+                                        ID: 2
+                                        MotivationID: 1
+                                        Date: 02.12.2024
+                                        UserName: Aigi
+                                        Password: Aigi321
+                    description: Returns the modified user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: User has not added required parameters to the modified user
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing user:
+                                    value: 'error: "User not found"'
+                    description: The user to be updated is not found in the array
+            summary: Update a user
+            description: 'Returns updated user, when modification of a user is successful'
 components:
     schemas:
         error:
@@ -359,3 +437,6 @@ components:
                 Date: 24.11.2024
                 UserID: '1'
                 Likes: '0'
+        User:
+            description: ''
+            type: object
