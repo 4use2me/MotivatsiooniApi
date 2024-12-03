@@ -26,7 +26,6 @@ const quotes =[
     }
 ]
 
-
 app.get("/quotes", (req, res) => { res.send (quotes)})
 
 app.get("/quotes/:id", (req, res) => {
@@ -132,6 +131,7 @@ const users =[
         Password: "Pia321"
     }
 ]
+
 app.get("/users", (req, res) => { res.send (users)})  
 
 app.get("/users/:id", (req, res) => {
@@ -144,34 +144,6 @@ app.get("/users/:id", (req, res) => {
     }
     res.send(users[req.params.id - 1])
 })
-
-app.put("/users/:id", (req, res) => {
-    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const userIndex = users.findIndex(u => u.ID === id); // Leia objekt ID alusel
-
-    if (userIndex === -1) {
-        return res.status(404).send({ error: "User not found" }); // Kui tsitaati pole, tagasta 404
-    }
-
-    if (!req.body.MotivationID || !req.body.Date || !req.body.UserName || !req.body.Password) {
-        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
-    }
-
-    const updatedUser = {
-        ID: id, // ID jääb samaks
-        MotivationID: parseInt(req.body.MotivationID, 10),
-        Date: req.body.Date,
-        UserName: req.body.UserName, 
-        Password: req.body.Password 
-    };
-
-    users[userIndex] = updatedUser; // Asenda olemasolev objekt uuendatuga
-
-    res.status(200) // Tagasta 200 OK
-        .location(`${getBaseURL(req)}/users/${id}`)
-        .send(updatedUser);
-});
-
 
 //Add new user
 app.post("/users", (req, res) => {
@@ -212,6 +184,33 @@ app.post("/users", (req, res) => {
         .send(newUser);
 });
 
+app.put("/users/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
+    const userIndex = users.findIndex(u => u.ID === id); // Leia objekt ID alusel
+
+    if (userIndex === -1) {
+        return res.status(404).send({ error: "User not found" }); // Kui tsitaati pole, tagasta 404
+    }
+
+    if (!req.body.MotivationID || !req.body.Date || !req.body.UserName || !req.body.Password) {
+        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
+    }
+
+    const updatedUser = {
+        ID: id, // ID jääb samaks
+        MotivationID: parseInt(req.body.MotivationID, 10),
+        Date: req.body.Date,
+        UserName: req.body.UserName, 
+        Password: req.body.Password 
+    };
+
+    users[userIndex] = updatedUser; // Asenda olemasolev objekt uuendatuga
+
+    res.status(200) // Tagasta 200 OK
+        .location(`${getBaseURL(req)}/users/${id}`)
+        .send(updatedUser);
+});
+
 //Delete an user
 app.delete("/users/:id", (req, res) => {
     const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
@@ -224,7 +223,6 @@ app.delete("/users/:id", (req, res) => {
     users.splice(userIndex, 1); // Kustuta kasutaja
     res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
 });
-
 
 // Methods of ownerships  
 const ownerships =[
@@ -253,11 +251,41 @@ app.get("/ownership/:id", (req, res) => {
     res.send(ownerships[req.params.id - 1])
 })
 
+//Add new ownership
+app.post("/ownerships", (req, res) => {
+    if (!req.body.UserID ||
+    !req.body.MotivationID) 
+    {   
+        console.log(req.body.UserID)
+        console.log(req.body.MotivationID)
+        return res.status(400).send
+        ({error: "One or multiple parameters are missing"});
+    }
+    // Teisenda UserID ja MotivationID integeriteks
+    const userID = parseInt(req.body.UserID, 10);
+    const motivationID = parseInt(req.body.MotivationID, 10);
+    // Kontrolli, kas teisendamine õnnestus
+    if (isNaN(userID) || isNaN(motivationID)) {
+        return res.status(400).send({
+            error: "UserID and MotivationID must be integers"
+        });
+    }
+
+    let ownership = {
+        ID: ownerships.length + 1,
+        UserID: userID,
+        MotivationID: motivationID 
+    }
+    ownerships.push(ownership)
+    res.status(201)
+    .location(`${getBaseURL(req)}/ownerships/${ownerships.length}`)
+    .send(ownership);
+})
+
+app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
+
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 function getBaseURL(req) {
     return req.connection && req.connection.encrypted ?
     "https" : "http" + `//${req.headers.host}` ;
 }
-
-
-
