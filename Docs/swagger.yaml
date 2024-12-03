@@ -507,6 +507,7 @@ paths:
         get:
             tags:
                 - ownerships
+
             parameters:
                 -
                     examples:
