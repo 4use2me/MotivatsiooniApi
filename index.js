@@ -296,8 +296,6 @@ app.delete("/ownerships/:id", (req, res) => {
 });
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
-
-app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 function getBaseURL(req) {
     return req.connection && req.connection.encrypted ?
     "https" : "http" + `//${req.headers.host}` ;
