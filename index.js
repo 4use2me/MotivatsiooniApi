@@ -253,6 +253,7 @@ app.get("/ownership/:id", (req, res) => {
     res.send(ownerships[req.params.id - 1])
 })
 
+app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 function getBaseURL(req) {
     return req.connection && req.connection.encrypted ?
     "https" : "http" + `//${req.headers.host}` ;
@@ -260,4 +261,3 @@ function getBaseURL(req) {
 
 
 
-app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
