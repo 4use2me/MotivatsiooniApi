@@ -607,6 +607,42 @@ paths:
                     description: The ownership to be updated is not found in the array
             summary: Update ownership
             description: Returns updated ownership
+        delete:
+            tags:
+                - ownerships
+            parameters:
+                -
+                    examples:
+                        Example of id of an ownership:
+                            value: '1'
+                    name: id
+                    description: Id of an ownership the user has requested
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value:
+                                        error: no content
+                    description: 'Return status code 204 to the user, upon successful deletion of an owneship'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing ownership:
+                                    value: 'error: "Ownership not found"'
+                    description: Return error 404 to the user if ownership with id is not found
+            summary: Delete an ownership
+            description: Deletes an ownership from the array based on given id
 components:
     schemas:
         error:
