@@ -244,3 +244,16 @@ app.post("/users", (req, res) => {
         .location(`${getBaseURL(req)}/users/${newUser.ID}`)
         .send(newUser);
 });
+
+//Delete an user
+app.delete("/users/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
+    const userIndex = users.findIndex(u => u.ID === id); // Leia õige objekt ID alusel
+
+    if (userIndex === -1) {
+        return res.status(404).send({ error: "User not found" }); // Kui kasutajat pole, tagasta 404
+    }
+
+    users.splice(userIndex, 1); // Kustuta kasutaja
+    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
+});
