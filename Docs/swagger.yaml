@@ -428,6 +428,8 @@ paths:
                             value: '1'
                     name: id
                     description: id of user to be updated
+                    schema:
+                        type: integer
                     in: path
                     required: true
             responses:
@@ -507,7 +509,6 @@ paths:
         get:
             tags:
                 - ownerships
-
             parameters:
                 -
                     examples:
@@ -553,61 +554,6 @@ paths:
                     description: Return error 404 to the user if ownership with id is not found
             summary: Get full details of a ownership
             description: Returns full details of a given ownership
-        put:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Ownership'
-                        examples:
-                            Example:
-                                value: "\t{\"UserID\":2,\"MotivationID\":4}"
-                required: true
-            tags:
-                - ownerships
-            parameters:
-                -
-                    examples:
-                        Example of the ownership id:
-                            value: '1'
-                    name: id
-                    description: Id of an ownership
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: string
-                            examples:
-                                Example of a modified ownership:
-                                    value:
-                                        UserID: 2
-                                        MotivationID: 4
-                    description: Returns the modified ownership
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing parameters:
-                                    value: "\terror: \"One or multiple parameters are missing\""
-                    description: User has not added required parameters to the modified ownership
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing ownership:
-                                    value: 'error: "Ownership not found"'
-                    description: The ownership to be updated is not found in the array
-            summary: Update ownership
-            description: Returns updated ownership
         delete:
             tags:
                 - ownerships
