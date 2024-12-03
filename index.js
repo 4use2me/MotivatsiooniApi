@@ -25,6 +25,7 @@ const quotes =[
         Likes: 9
     }
 ]
+
 app.get("/quotes", (req, res) => { res.send (quotes)})
 
 app.get("/quotes/:id", (req, res) => {
@@ -130,6 +131,7 @@ const users =[
         Password: "Pia321"
     }
 ]
+
 app.get("/users", (req, res) => { res.send (users)})  
 
 app.get("/users/:id", (req, res) => {
@@ -142,6 +144,45 @@ app.get("/users/:id", (req, res) => {
     }
     res.send(users[req.params.id - 1])
 })
+
+//Add new user
+app.post("/users", (req, res) => {
+    const { User, MotivationID, Date, UserName, Password } = req.body;
+
+    // Check for missing fields
+    if (!User || !MotivationID || !Date || !UserName || !Password) {
+        console.log({ User, MotivationID, Date, UserName, Password });
+        return res.status(400).send({
+            error: "One or multiple parameters are missing"
+        });
+    }
+
+    // Parse MotivationID as integer
+    const motivationID = parseInt(MotivationID, 10);
+    if (isNaN(motivationID)) {
+        return res.status(400).send({
+            error: "MotivationID must be an integer"
+        });
+    }
+
+    // Create new user object
+    const newUser = {
+        ID: users.length + 1, // Incremental ID
+        User,
+        MotivationID: motivationID,
+        Date,
+        UserName,
+        Password
+    };
+
+    // Add the user to the users array
+    users.push(newUser);
+
+    // Respond with created user
+    res.status(201)
+        .location(`${getBaseURL(req)}/users/${newUser.ID}`)
+        .send(newUser);
+});
 
 app.put("/users/:id", (req, res) => {
     const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
@@ -170,6 +211,19 @@ app.put("/users/:id", (req, res) => {
         .send(updatedUser);
 });
 
+//Delete an user
+app.delete("/users/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
+    const userIndex = users.findIndex(u => u.ID === id); // Leia õige objekt ID alusel
+
+    if (userIndex === -1) {
+        return res.status(404).send({ error: "User not found" }); // Kui kasutajat pole, tagasta 404
+    }
+
+    users.splice(userIndex, 1); // Kustuta kasutaja
+    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
+});
+
 // Methods of ownerships  
 const ownerships =[
     {
@@ -185,6 +239,48 @@ const ownerships =[
 ]
 
 app.get("/ownerships", (req, res) => { res.send (ownerships)}) 
+
+app.get("/ownership/:id", (req, res) => {
+    if (typeof ownerships[req.params.id - 1] === "undefined") {
+        return res.status(404).send("Ownership not found.")
+    }
+    if (req.params.id === null) {
+        return res.status(400).send
+        ({error: "Invalid ownership ID"});
+    }
+    res.send(ownerships[req.params.id - 1])
+})
+
+//Add new ownership
+app.post("/ownerships", (req, res) => {
+    if (!req.body.UserID ||
+    !req.body.MotivationID) 
+    {   
+        console.log(req.body.UserID)
+        console.log(req.body.MotivationID)
+        return res.status(400).send
+        ({error: "One or multiple parameters are missing"});
+    }
+    // Teisenda UserID ja MotivationID integeriteks
+    const userID = parseInt(req.body.UserID, 10);
+    const motivationID = parseInt(req.body.MotivationID, 10);
+    // Kontrolli, kas teisendamine õnnestus
+    if (isNaN(userID) || isNaN(motivationID)) {
+        return res.status(400).send({
+            error: "UserID and MotivationID must be integers"
+        });
+    }
+
+    let ownership = {
+        ID: ownerships.length + 1,
+        UserID: userID,
+        MotivationID: motivationID 
+    }
+    ownerships.push(ownership)
+    res.status(201)
+    .location(`${getBaseURL(req)}/ownerships/${ownerships.length}`)
+    .send(ownership);
+})
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 

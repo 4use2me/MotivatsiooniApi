@@ -66,7 +66,7 @@ paths:
                                 Missing parameters:
                                     value: 'error: "One or multiple parameters are missing"'
                     description: 'Return status 400 to the user, if one or multiple of parameters are missing'
-            summary: add new quote
+            summary: Add new quote
             description: Adds a new quote into the array
     '/quotes/{id}':
         description: ''
@@ -313,6 +313,45 @@ paths:
                     description: Returns a list of ownerships
             summary: get list of all ownerships from api
             description: Returns a list of all ownerships in the api.
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Ownership'
+                        examples:
+                            Example of a ownership:
+                                value:
+                                    UserID: 2
+                                    MotivationID: 4
+                required: true
+            tags:
+                - ownerships
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Ownership that is added:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: 'Return code 201 to the user, if creation of new ownership was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
+            summary: add new ownership
+            description: Adds a new ownership into the array
     '/users/{id}':
         get:
             tags:
@@ -428,7 +467,146 @@ paths:
                     description: The user to be updated is not found in the array
             summary: Update a user
             description: 'Returns updated user, when modification of a user is successful'
-    '/ownerships/{id}': {}
+        delete:
+            tags:
+                - users
+            parameters:
+                -
+                    examples:
+                        Example of the users id:
+                            value: '1'
+                    name: id
+                    description: Id of a requested user
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value:
+                                        error: no connect
+                    description: Return status 204 upon successful deletion of an user
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing user:
+                                    value: 'error: "User not found"'
+                    description: Return error 404 if the user with id is not found
+            summary: Delete a specific user
+            description: Deletes a user from the array based on given id
+    '/ownerships/{id}':
+        get:
+            tags:
+                - ownerships
+            parameters:
+                -
+                    examples:
+                        Example of id of a ownership:
+                            value: '1'
+                    name: id
+                    description: Id of a ownership the user has requested.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a ownership with details:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: Returns details of a ownership to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid ownership id:
+                                    value: 'error: "Invalid id inserted"'
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Quote/w+ was not found:
+                                    value: 'error: "Ownership\\w+ was not found in ownership array."'
+                    description: Return error 404 to the user if ownership with id is not found
+            summary: Get full details of a ownership
+            description: Returns full details of a given ownership
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Ownership'
+                        examples:
+                            Example:
+                                value: "\t{\"UserID\":2,\"MotivationID\":4}"
+                required: true
+            tags:
+                - ownerships
+            parameters:
+                -
+                    examples:
+                        Example of the ownership id:
+                            value: '1'
+                    name: id
+                    description: Id of an ownership
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                            examples:
+                                Example of a modified ownership:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: Returns the modified ownership
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: "\terror: \"One or multiple parameters are missing\""
+                    description: User has not added required parameters to the modified ownership
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing ownership:
+                                    value: 'error: "Ownership not found"'
+                    description: The ownership to be updated is not found in the array
+            summary: Update ownership
+            description: Returns updated ownership
 components:
     schemas:
         error:
@@ -459,5 +637,17 @@ components:
                 UserID: '1'
                 Likes: '0'
         User:
-            description: ''
+            description: Example of a valid user
             type: object
+            example:
+                ID: 3
+                MotivationID: 4
+                Date: 24.11.2024
+                UserName: Aigi
+                Password: Qwerty1
+        Ownership:
+            description: Example of a valid ownership
+            type: object
+            example:
+                UserID: 2
+                MotivationID: 4
