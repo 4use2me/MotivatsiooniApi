@@ -282,7 +282,18 @@ app.post("/ownerships", (req, res) => {
     .send(ownership);
 })
 
-app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
+//Delete an ownership
+app.delete("/ownerships/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
+    const ownershipIndex = ownerships.findIndex(q => q.ID === id); // Leia õige objekt ID alusel
+
+    if (ownershipIndex === -1) {
+        return res.status(404).send({ error: "Ownership not found" }); // Kui objekti pole, tagasta 404
+    }
+
+    ownerships.splice(ownershipIndex, 1); // Kustuta objekt
+    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
+});
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 function getBaseURL(req) {
