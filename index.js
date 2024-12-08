@@ -1,10 +1,12 @@
 const app = require('express')();
+const cors = require('cors');
 const port = 8080;
 const yamljs = require('yamljs');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDoc = yamljs.load("./docs/swagger.yaml");
 var express = require('express');
 
+app.use(cors());
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
@@ -21,7 +23,7 @@ const quotes =[
         ID: 2,
         Quote:"teine tsitaat",
         Date: "25.11.2024",
-        UserID: 1,
+        UserID: 2,
         Likes: 9
     }
 ]
