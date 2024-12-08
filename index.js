@@ -296,33 +296,6 @@ app.delete("/ownerships/:id", (req, res) => {
     res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
 });
 
-// Methods of ownerships  
-const ownerships =[
-    {
-        ID: 1,
-        MotivationID:1,
-        UserID: 1  
-    },
-    {
-        ID: 2,
-        MotivationID:2,
-        UserID: 1  
-    }
-]
-
-app.get("/ownerships", (req, res) => { res.send (ownerships)}) 
-
-app.get("/ownership/:id", (req, res) => {
-    if (typeof ownerships[req.params.id - 1] === "undefined") {
-        return res.status(404).send("Ownership not found.")
-    }
-    if (req.params.id === null) {
-        return res.status(400).send
-        ({error: "Invalid ownership ID"});
-    }
-    res.send(ownerships[req.params.id - 1])
-})
-
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
 
 function getBaseURL(req) {
