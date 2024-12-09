@@ -1,47 +1,51 @@
-const app = require('express')();
+require('dotenv').config();
+
+const port = process.env.PORT || 8080;
+const host = 'localhost';
+const express = require('express');
+const app = express();
+
 const cors = require('cors');
-const port = 8080;
 const yamljs = require('yamljs');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDoc = yamljs.load("./docs/swagger.yaml");
-var express = require('express');
+
 
 app.use(cors());
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
-// Methods of quotes
-const quotes =[
-    {
-        ID: 1,
-        Quote:"esimene tsitaat",
-        Date: "25.11.2024",
-        UserID: 1,
-        Likes: 10
-    },
-    {
-        ID: 2,
-        Quote:"teine tsitaat",
-        Date: "25.11.2024",
-        UserID: 2,
-        Likes: 9
-    }
-]
+// Methods of motivations
+// const motivations =[
+//     {
+//         ID: 1,
+//         Quote:"esimene tsitaat",
+//         Date: "25.11.2024",
+//         UserID: 1,
+//         Likes: 10
+//     },
+//     {
+//         ID: 2,
+//         Quote:"teine tsitaat",
+//         Date: "25.11.2024",
+//         UserID: 2,
+//         Likes: 9
+//     }
+// ]
 
-app.get("/quotes", (req, res) => { res.send (quotes)})
-
-app.get("/quotes/:id", (req, res) => {
-    if (typeof quotes[req.params.id - 1] === "undefined") {
-        return res.status(404).send("Quote not found.")
-    }
-    if (req.params.id === null) {
-        return res.status(400).send
-        ({error: "Invalid quote ID"});
-    }
-    res.send(quotes[req.params.id - 1])
+app.get("/motivations", async (req, res) => { 
+    const motivations = await db.motivations.findAll();
+    res.send (motivations.map(({id, quote}) => {return {id, quote}}))
 })
 
-app.post("/quotes", (req, res) => {
+app.get("/motivations/:id", async (req, res) => {
+    const motivation = await getMotivation(req, res);
+    if (!motivation) { return};
+    return res.send(motivation);
+    }
+)
+
+app.post("/motivations", async (req, res) => {
     if (!req.body.Quote ||
     !req.body.Date ||
     !req.body.UserID ||
@@ -64,32 +68,31 @@ app.post("/quotes", (req, res) => {
         });
     }
 
-    let quote = {
-        ID: quotes.length + 1,
+    let newMotivation = {
         Quote: req.body.Quote,
         Date: req.body.Date,
         UserID: userID,
         Likes: likes 
     }
-    quotes.push(quote)
+    const createdMotivation = await db.motivations.create(newMotivation);
     res.status(201)
-    .location(`${getBaseURL(req)}/quotes/${quotes.length}`)
-    .send(quote);
+    .location(`${getBaseURL(req)}/motivations/${createdMotivation.MotivationID}`)
+    .send(createdMotivation.MotivationID);
 })
 
-app.put("/quotes/:id", (req, res) => {
+app.put("/motivations/:id", (req, res) => {
     const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const quoteIndex = quotes.findIndex(q => q.ID === id); // Leia objekt ID alusel
+    const motivationIndex = motivations.findIndex(q => q.ID === id); // Leia objekt ID alusel
 
-    if (quoteIndex === -1) {
-        return res.status(404).send({ error: "Quote not found" }); // Kui tsitaati pole, tagasta 404
+    if (motivationIndex === -1) {
+        return res.status(404).send({ error: "Motivation not found" }); // Kui motivatsiooni pole, tagasta 404
     }
 
     if (!req.body.Quote || !req.body.Date || !req.body.UserID || !req.body.Likes) {
         return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
     }
 
-    const updatedQuote = {
+    const updatedMotivation = {
         ID: id, // ID jääb samaks
         Quote: req.body.Quote,
         Date: req.body.Date,
@@ -97,22 +100,22 @@ app.put("/quotes/:id", (req, res) => {
         Likes: parseInt(req.body.Likes, 10)   // Konverteeri string integeriks
     };
 
-    quotes[quoteIndex] = updatedQuote; // Asenda olemasolev objekt uuendatuga
+    motivations[motivationIndex] = updatedMotivation; // Asenda olemasolev objekt uuendatuga
 
     res.status(200) // Tagasta 200 OK
-        .location(`${getBaseURL(req)}/quotes/${id}`)
-        .send(updatedQuote);
+        .location(`${getBaseURL(req)}/motivations/${id}`)
+        .send(updatedMotivation);
 });
 
-app.delete("/quotes/:id", (req, res) => {
+app.delete("/motivations/:id", (req, res) => {
     const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const quoteIndex = quotes.findIndex(q => q.ID === id); // Leia õige objekt ID alusel
+    const motivationIndex = motivations.findIndex(q => q.ID === id); // Leia õige objekt ID alusel
 
-    if (quoteIndex === -1) {
-        return res.status(404).send({ error: "Quote not found" }); // Kui tsitaati pole, tagasta 404
+    if (motivationIndex === -1) {
+        return res.status(404).send({ error: "Motivation not found" }); // Kui motivatsiooni pole, tagasta 404
     }
 
-    quotes.splice(quoteIndex, 1); // Kustuta tsitaat
+    motivations.splice(motivationIndex, 1); // Kustuta motivatsioon 
     res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
 });
 
@@ -191,7 +194,7 @@ app.put("/users/:id", (req, res) => {
     const userIndex = users.findIndex(u => u.ID === id); // Leia objekt ID alusel
 
     if (userIndex === -1) {
-        return res.status(404).send({ error: "User not found" }); // Kui tsitaati pole, tagasta 404
+        return res.status(404).send({ error: "User not found" }); // Kui kasutajat pole, tagasta 404
     }
 
     if (!req.body.MotivationID || !req.body.Date || !req.body.UserName || !req.body.Password) {
@@ -303,4 +306,18 @@ app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhos
 function getBaseURL(req) {
     return req.connection && req.connection.encrypted ?
     "https" : "http" + `//${req.headers.host}` ;
+}
+
+async function getMotivation(req, res) {
+    const idNumber = parseInt(req.params.MotivationID);
+    if (isNaN(idNumber)) {
+        res.status(400).send({error: "Invalid motivation ID"});
+        return null;
+    }
+    const motivation = await db.motivations.findByPk(idNumber); 
+    if (!motivation) {
+        res.status(404).send({error: "Motivation not found"});
+        return null;
+    }
+    return motivation;
 }
