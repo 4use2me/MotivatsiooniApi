@@ -3,230 +3,6 @@ info:
     title: MotivatsiooniApi
     version: 1.0.0
 paths:
-    /quotes:
-        get:
-            tags:
-                - quotes
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                List of quotes:
-                                    value:
-                                        - esimene tsitaat
-                                        - teine tsitaat
-                    description: Returns a list of quotes
-            summary: get list of all quotes from api
-            description: Returns a list of all quotes in the api.
-        post:
-            requestBody:
-                description: Data of quote that the user wants to add
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Quote'
-                        examples:
-                            Example of a quote:
-                                value:
-                                    Quote: kolmas tsitaat
-                                    Date: 24.11.2024
-                                    UserID: 1
-                                    Likes: 0
-                required: true
-            tags:
-                - quotes
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Quote that is added:
-                                    value:
-                                        ID: 3
-                                        Quote: kolmas tsitaat
-                                        Date: 24.11.2024
-                                        UserID: 1
-                                        Likes: 0
-                    description: 'Return code 201 to the user, if creation of new quote was successful'
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing parameters:
-                                    value: 'error: "One or multiple parameters are missing"'
-                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
-            summary: Add new quote
-            description: Adds a new quote into the array
-    '/quotes/{id}':
-        description: ''
-        get:
-            tags:
-                - quotes
-            parameters:
-                -
-                    examples:
-                        Example of id of a quote.:
-                            value: '1'
-                    name: id
-                    description: Id of a quote the user has requested.
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Example of a quote with details:
-                                    value:
-                                        ID: 2
-                                        Quote: teine tsitaat
-                                        Date: 25.11.2024
-                                        UserID: 1
-                                        Likes: 9
-                    description: Returns details of a quote to the user
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Invalid quote id:
-                                    value: 'error: "Invalid id inserted"'
-                    description: Return status code 400 to the user if an invalid id was entered
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Quote/w+ was not found:
-                                    value: 'error: "Quote\\w+ was not found in quote array."'
-                    description: Return error 404 to the user if quote with id is not found
-            summary: Get full details of a quote.
-            description: Returns full details of a given quote.
-        put:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Quote'
-                        examples:
-                            Example of a quote:
-                                value:
-                                    ID: 2
-                                    Quote: teine tsitaat
-                                    Date: 25.11.2024
-                                    UserID: 1
-                                    Likes: 9
-                required: true
-            tags:
-                - quotes
-            parameters:
-                -
-                    examples:
-                        id of quote:
-                            value: '1'
-                    name: id
-                    description: id of quote to be updated
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Example of a modified quote:
-                                    value:
-                                        ID: 2
-                                        Quote: teine tsitaat
-                                        Date: 25.11.2024
-                                        UserID: 1
-                                        Likes: 9
-                    description: Returns the modified quote to the user
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing parameters:
-                                    value: 'error: "One or multiple parameters are missing"'
-                    description: User has not added required parameters to the modified quote
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing quote:
-                                    value: 'error: "Quote not found"'
-                    description: The quote to be updated is not found in the array
-            summary: Update a quote
-            description: 'Returns updated quote, when modification of a quote is successful'
-        delete:
-            tags:
-                - quotes
-            parameters:
-                -
-                    examples:
-                        Example of id of a quote:
-                            value: '1'
-                    name: id
-                    description: Id of a quote the user has requested
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '204':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                successful error:
-                                    value:
-                                        error: no content
-                    description: 'Return status code 204 to the user, upon successful deletion of a quote'
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing quote:
-                                    value: 'error: "Quote not found"'
-                    description: Return error 404 to the user if quote with id is not found
-            summary: Delete a specific quote
-            description: Deletes a quote from the array based on given id
-        parameters:
-            -
-                name: id
-                in: path
-                required: true
     /users:
         get:
             tags:
@@ -590,6 +366,220 @@ paths:
                     description: Return error 404 to the user if ownership with id is not found
             summary: Delete an ownership
             description: Deletes an ownership from the array based on given id
+    /motivations:
+        get:
+            tags:
+                - motivations
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of motivations:
+                                    value:
+                                        - esimene tsitaat
+                                        - teine tsitaat
+                    description: Returns a list of motivations
+            summary: get list of all motivations from api
+            description: Returns a list of all motivations in the api.
+        post:
+            requestBody:
+                description: Data of motivation that the user wants to add
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Motivation'
+                        examples:
+                            Example of a motivation:
+                                value:
+                                    Quote: kolmas tsitaat
+                                    Date: 24.11.2024
+                                    UserID: 1
+                                    Likes: 0
+                required: true
+            tags:
+                - motivations
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Motivation that is added:
+                                    value:
+                                        ID: 3
+                                        Quote: kolmas tsitaat
+                                        Date: 24.11.2024
+                                        UserID: 1
+                                        Likes: 0
+                    description: 'Return code 201 to the user, if creation of new motivation was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
+            summary: Add new motivation
+            description: Adds a new motivation into the array
+    '/motivations/{id}':
+        description: ''
+        get:
+            tags:
+                - motivations
+            parameters:
+                -
+                    examples:
+                        Example an id of a motivation:
+                            value: '1'
+                    name: id
+                    description: Id of a motivation the user has requested.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a motivation with details:
+                                    value:
+                                        ID: 2
+                                        Quote: teine tsitaat
+                                        Date: 25.11.2024
+                                        UserID: 1
+                                        Likes: 9
+                    description: Returns details of a motivation to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid motivation id:
+                                    value: 'error: "Invalid id inserted"'
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Motivation was not found:
+                                    value: 'error: "Motivation was not found in motivation array."'
+                    description: Return error 404 to the user if motivation with id is not found
+            summary: Get full details of a motivation
+            description: Returns full details of a given motivation
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Motivation'
+                        examples:
+                            Example of a motivation:
+                                value: '1'
+                required: true
+            tags:
+                - motivations
+            parameters:
+                -
+                    examples:
+                        id of motivation:
+                            value: '1'
+                    name: id
+                    description: id of motivation to be updated
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a modified motivation:
+                                    value:
+                                        ID: 2
+                                        Quote: teine tsitaat
+                                        Date: 25.11.2024
+                                        UserID: 1
+                                        Likes: 9
+                    description: Returns the modified motivation to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: User has not added required parameters to the modified motivation
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing motivation:
+                                    value: 'error: "Motivation not found"'
+                    description: The motivation to be updated is not found in the array
+            summary: Update a motivation
+            description: 'Returns updated motivation, when modification of a motivation is successful'
+        delete:
+            tags:
+                - motivations
+            parameters:
+                -
+                    examples:
+                        Example of id of a motivation:
+                            value: '1'
+                    name: id
+                    description: Id of a motivation the user has requested
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value:
+                                        error: no content
+                    description: 'Return status code 204 to the user, upon successful deletion of a motivation'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing motivation:
+                                    value: 'error: "Motivation not found"'
+                    description: Return error 404 to the user if motivation with id is not found
+            summary: Delete a specific motivation
+            description: Deletes a motivation from the array based on given id
 components:
     schemas:
         error:
@@ -601,7 +591,22 @@ components:
                     type: string
             example:
                 error: Error message.
-        Quote:
+        User:
+            description: Example of a valid user
+            type: object
+            example:
+                ID: 3
+                MotivationID: 4
+                Date: 24.11.2024
+                UserName: Aigi
+                Password: Qwerty1
+        Ownership:
+            description: Example of a valid ownership
+            type: object
+            example:
+                UserID: 2
+                MotivationID: 4
+        Motivation:
             title: Root Type for Quote
             description: Example of a valid quote
             type: object
@@ -619,18 +624,3 @@ components:
                 Date: 24.11.2024
                 UserID: '1'
                 Likes: '0'
-        User:
-            description: Example of a valid user
-            type: object
-            example:
-                ID: 3
-                MotivationID: 4
-                Date: 24.11.2024
-                UserName: Aigi
-                Password: Qwerty1
-        Ownership:
-            description: Example of a valid ownership
-            type: object
-            example:
-                UserID: 2
-                MotivationID: 4
