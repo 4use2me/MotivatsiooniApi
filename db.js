@@ -18,6 +18,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.Sequelize = sequelize;
 db.motivations = require("./models/motivation")(sequelize, DataTypes);
+db.users = require("./models/user")(sequelize, DataTypes);
 
 const sync = (async () => {
     await sequelize.sync({ alter: true });
