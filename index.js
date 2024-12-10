@@ -34,115 +34,22 @@ app.use(express.json());
 // ]
 
 // Methods of users  
-const users =[
-    {
-        ID: 1,
-        MotivationID:1,
-        Date: "25.11.2024",
-        UserName: "Aigi",
-        Password: "Aigi123"
-    },
-    {
-        ID: 2,
-        MotivationID:2,
-        Date: "26.11.2024",
-        UserName: "Pia",
-        Password: "Pia321"
-    }
-]
-
-app.get("/users", (req, res) => { res.send (users)})  
-
-app.get("/users/:id", (req, res) => {
-    if (typeof users[req.params.id - 1] === "undefined") {
-        return res.status(404).send("User not found.")
-    }
-    if (req.params.id === null) {
-        return res.status(400).send
-        ({error: "Invalid user ID"});
-    }
-    res.send(users[req.params.id - 1])
-})
-
-//Add new user
-app.post("/users", (req, res) => {
-    const { User, MotivationID, Date, UserName, Password } = req.body;
-
-    // Check for missing fields
-    if (!User || !MotivationID || !Date || !UserName || !Password) {
-        console.log({ User, MotivationID, Date, UserName, Password });
-        return res.status(400).send({
-            error: "One or multiple parameters are missing"
-        });
-    }
-
-    // Parse MotivationID as integer
-    const motivationID = parseInt(MotivationID, 10);
-    if (isNaN(motivationID)) {
-        return res.status(400).send({
-            error: "MotivationID must be an integer"
-        });
-    }
-
-    // Create new user object
-    const newUser = {
-        ID: users.length + 1, // Incremental ID
-        User,
-        MotivationID: motivationID,
-        Date,
-        UserName,
-        Password
-    };
-
-    // Add the user to the users array
-    users.push(newUser);
-
-    // Respond with created user
-    res.status(201)
-        .location(`${getBaseURL(req)}/users/${newUser.ID}`)
-        .send(newUser);
-});
-
-app.put("/users/:id", (req, res) => {
-    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const userIndex = users.findIndex(u => u.ID === id); // Leia objekt ID alusel
-
-    if (userIndex === -1) {
-        return res.status(404).send({ error: "User not found" }); // Kui kasutajat pole, tagasta 404
-    }
-
-    if (!req.body.MotivationID || !req.body.Date || !req.body.UserName || !req.body.Password) {
-        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
-    }
-
-    const updatedUser = {
-        ID: id, // ID jääb samaks
-        MotivationID: parseInt(req.body.MotivationID, 10),
-        Date: req.body.Date,
-        UserName: req.body.UserName, 
-        Password: req.body.Password 
-    };
-
-    users[userIndex] = updatedUser; // Asenda olemasolev objekt uuendatuga
-
-    res.status(200) // Tagasta 200 OK
-        .location(`${getBaseURL(req)}/users/${id}`)
-        .send(updatedUser);
-});
-
-
-//Delete an user
-app.delete("/users/:id", (req, res) => {
-    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const userIndex = users.findIndex(u => u.ID === id); // Leia õige objekt ID alusel
-
-    if (userIndex === -1) {
-        return res.status(404).send({ error: "User not found" }); // Kui kasutajat pole, tagasta 404
-    }
-
-    users.splice(userIndex, 1); // Kustuta kasutaja
-    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
-});
+// const users =[
+//     {
+//         ID: 1,
+//         MotivationID:1,
+//         Date: "25.11.2024",
+//         UserName: "Aigi",
+//         Password: "Aigi123"
+//     },
+//     {
+//         ID: 2,
+//         MotivationID:2,
+//         Date: "26.11.2024",
+//         UserName: "Pia",
+//         Password: "Pia321"
+//     }
+// ]
 
 // Methods of ownerships  
 const ownerships =[

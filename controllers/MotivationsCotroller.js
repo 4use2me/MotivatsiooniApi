@@ -62,7 +62,7 @@ exports.editById = async (req, res) => {
     motivation.UserID = parseInt(req.body.UserID, 10)
     motivation.Likes = parseInt(req.body.Likes, 10)
     await motivation.save();
-    returnres.status(200) // Tagasta 200 OK
+    return res.status(200) // Tagasta 200 OK
         .location(`${Utils.getBaseURL(req)}/motivations/${motivation.MotivationID}`)
         .send(motivation);
 }
