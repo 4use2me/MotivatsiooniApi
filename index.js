@@ -15,7 +15,7 @@ app.use(cors());
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
-// Methods of motivations
+//Methods of motivations
 // const motivations =[
 //     {
 //         ID: 1,
@@ -32,92 +32,6 @@ app.use(express.json());
 //         Likes: 9
 //     }
 // ]
-
-app.get("/motivations", async (req, res) => { 
-    const motivations = await db.motivations.findAll();
-    res.send (motivations.map(({id, quote}) => {return {id, quote}}))
-})
-
-app.get("/motivations/:id", async (req, res) => {
-    const motivation = await getMotivation(req, res);
-    if (!motivation) { return};
-    return res.send(motivation);
-    }
-)
-
-app.post("/motivations", async (req, res) => {
-    if (!req.body.Quote ||
-    !req.body.Date ||
-    !req.body.UserID ||
-    !req.body.Likes) 
-    {   
-        console.log(req.body.Quote)
-        console.log(req.body.Date)
-        console.log(req.body.UserID)
-        console.log(req.body.Likes)
-        return res.status(400).send
-        ({error: "One or multiple parameters are missing"});
-    }
-    // Teisenda UserID ja Likes integeriteks
-    const userID = parseInt(req.body.UserID, 10);
-    const likes = parseInt(req.body.Likes, 10);
-    // Kontrolli, kas teisendamine õnnestus
-    if (isNaN(userID) || isNaN(likes)) {
-        return res.status(400).send({
-            error: "UserID and Likes must be integers"
-        });
-    }
-
-    let newMotivation = {
-        Quote: req.body.Quote,
-        Date: req.body.Date,
-        UserID: userID,
-        Likes: likes 
-    }
-    const createdMotivation = await db.motivations.create(newMotivation);
-    res.status(201)
-    .location(`${getBaseURL(req)}/motivations/${createdMotivation.MotivationID}`)
-    .send(createdMotivation.MotivationID);
-})
-
-app.put("/motivations/:id", (req, res) => {
-    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const motivationIndex = motivations.findIndex(q => q.ID === id); // Leia objekt ID alusel
-
-    if (motivationIndex === -1) {
-        return res.status(404).send({ error: "Motivation not found" }); // Kui motivatsiooni pole, tagasta 404
-    }
-
-    if (!req.body.Quote || !req.body.Date || !req.body.UserID || !req.body.Likes) {
-        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
-    }
-
-    const updatedMotivation = {
-        ID: id, // ID jääb samaks
-        Quote: req.body.Quote,
-        Date: req.body.Date,
-        UserID: parseInt(req.body.UserID, 10), // Konverteeri string integeriks
-        Likes: parseInt(req.body.Likes, 10)   // Konverteeri string integeriks
-    };
-
-    motivations[motivationIndex] = updatedMotivation; // Asenda olemasolev objekt uuendatuga
-
-    res.status(200) // Tagasta 200 OK
-        .location(`${getBaseURL(req)}/motivations/${id}`)
-        .send(updatedMotivation);
-});
-
-app.delete("/motivations/:id", (req, res) => {
-    const id = parseInt(req.params.id, 10); // Saad ID URL-i parameetritest
-    const motivationIndex = motivations.findIndex(q => q.ID === id); // Leia õige objekt ID alusel
-
-    if (motivationIndex === -1) {
-        return res.status(404).send({ error: "Motivation not found" }); // Kui motivatsiooni pole, tagasta 404
-    }
-
-    motivations.splice(motivationIndex, 1); // Kustuta motivatsioon 
-    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
-});
 
 // Methods of users  
 const users =[
@@ -302,22 +216,3 @@ app.delete("/ownerships/:id", (req, res) => {
 });
 
 app.listen(port, () => { console.log(`Api on saadaval aadressil: http://localhost:${port}`);});
-
-function getBaseURL(req) {
-    return req.connection && req.connection.encrypted ?
-    "https" : "http" + `//${req.headers.host}` ;
-}
-
-async function getMotivation(req, res) {
-    const idNumber = parseInt(req.params.MotivationID);
-    if (isNaN(idNumber)) {
-        res.status(400).send({error: "Invalid motivation ID"});
-        return null;
-    }
-    const motivation = await db.motivations.findByPk(idNumber); 
-    if (!motivation) {
-        res.status(404).send({error: "Motivation not found"});
-        return null;
-    }
-    return motivation;
-}
