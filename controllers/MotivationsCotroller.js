@@ -1,5 +1,5 @@
 const {db} =require("../db");
-const Utils = require("../utils");
+const Utils = require("./utils");
 
 exports.getAll = async (req, res) => {
     const motivations = await db.motivations.findAll();
