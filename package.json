@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "",
+    "start": "concurrently \" nodemon .\" \"cd Frontend/frontend && npm run dev\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Quotes api for registering quotes wich users may own.",
   "dependencies": {
+    "concurrently": "^9.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "mariadb": "^3.3.2",
     "nodemon": "^3.1.7",
+    "sequelize": "^6.37.4",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   }
