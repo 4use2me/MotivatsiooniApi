@@ -12,17 +12,16 @@ export default {
         <thead class="table-dark">
             <tr>
                 <th>Quote</th>
-                <th>Date</th>
-                <th>UserID</th>
                 <th>Likes</th>
+                <th>UserID</th>
+                
             </tr>
         </thead>
         <tbody>
             <tr v-for="item in items" :key="item.MotivationID">
                 <td>{{item.Quote}}</td>
-                <td>{{item.Date}}</td>
-                <td>{{item.UserID}}</td>
                 <td>{{item.Likes}}</td>
+                <td>{{item.UserID}}</td>
             </tr>
         </tbody>
     </table>

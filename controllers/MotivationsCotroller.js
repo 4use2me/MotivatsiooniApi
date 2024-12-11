@@ -14,14 +14,12 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
     if (!req.body.Quote ||
-    !req.body.Date ||
-    !req.body.UserID ||
-    !req.body.Likes) 
+    !req.body.Likes ||
+    !req.body.UserID) 
     {   
         console.log(req.body.Quote)
-        console.log(req.body.Date)
-        console.log(req.body.UserID)
         console.log(req.body.Likes)
+        console.log(req.body.UserID)
         return res.status(400).send
         ({error: "One or multiple parameters are missing"});
     }
@@ -37,9 +35,8 @@ exports.create = async (req, res) => {
 
     let newMotivation = {
         Quote: req.body.Quote,
-        Date: req.body.Date,
-        UserID: userID,
-        Likes: likes 
+        Likes: likes,
+        UserID: userID
     }
     const createdMotivation = await db.motivations.create(newMotivation);
     res.status(201)
@@ -51,16 +48,13 @@ exports.editById = async (req, res) => {
     const motivation = await getMotivation(req, res);
     if (!motivation) { return};
     if (!req.body.Quote ||
-        !req.body.Date ||
-        !req.body.UserID ||
-        !req.body.Likes)
+        !req.body.UserID)
     {
         return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
     }
     motivation.Quote = req.body.Quote
-    motivation.Date = req.body.Date
-    motivation.UserID = parseInt(req.body.UserID, 10)
     motivation.Likes = parseInt(req.body.Likes, 10)
+    motivation.UserID = parseInt(req.body.UserID, 10)
     await motivation.save();
     return res.status(200) // Tagasta 200 OK
         .location(`${Utils.getBaseURL(req)}/motivations/${motivation.MotivationID}`)
@@ -71,7 +65,7 @@ exports.deleteById = async (req, res) => {
     const motivation = await getMotivation(req, res);
     if (!motivation) { return};
     await motivation.destroy(); // Kustuta motivatsioon andmebaasist 
-    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
+    res.status(204).send(); // Tagasta 204 ilma sisuta
 }
 
 const getMotivation = async (req, res) => {

@@ -13,19 +13,14 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
     if (
-    !req.body.Date ||
     !req.body.UserName ||
     !req.body.Password) 
     {   
-        console.log(req.body.Date)
-        console.log(req.body.UserName)
-        console.log(req.body.Password)
         return res.status(400).send
         ({error: "One or multiple parameters are missing"});
     }
 
     let newUser = {
-        Date: req.body.Date,
         UserName: req.body.UserName,
         Password: req.body.Password
     }
@@ -38,15 +33,12 @@ exports.create = async (req, res) => {
 exports.editById = async (req, res) => {
     const user = await getUser(req, res);
     if (!user) { return};
-    if (!req.body.MotivationID ||
-        !req.body.Date ||
-        !req.body.UserName ||
+    if (!req.body.UserName ||
         !req.body.Password)
     {
         return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
     }
     user.MotivationID = parseInt(req.body.MotivationID, 10)
-    user.Date = req.body.Date
     user.UserName = req.body.UserName
     user.Password = req.body.Password
     await user.save();
@@ -59,7 +51,7 @@ exports.deleteById = async (req, res) => {
     const user = await getUser(req, res);
     if (!user) { return};
     await user.destroy(); // Kustuta andmebaasist 
-    res.status(204).send({ error: "No content" }); // Tagasta 204 ilma sisuta
+    res.status(204).send(); // Tagasta 204 ilma sisuta
 }
 
 const getUser = async (req, res) => {

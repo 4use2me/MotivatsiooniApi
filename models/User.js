@@ -7,19 +7,15 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            MotivationID: {
-                type: DataTypes.INTEGER,
-            },
-            Date: {
-                type: DataTypes.DATEONLY,
-                allowNull: false,
-            },
             UserName: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
             Password: {
                 type: DataTypes.STRING,
+            },
+            MotivationID: {
+                type: DataTypes.INTEGER,
             }
         }
     );
