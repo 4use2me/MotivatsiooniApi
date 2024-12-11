@@ -1,4 +1,4 @@
-const MotivationsController = require ('../controllers/MotivationsCotroller');
+const MotivationsController = require('../controllers/MotivationsController');
 
 module.exports = (app) => { 
     app.route("/motivations")

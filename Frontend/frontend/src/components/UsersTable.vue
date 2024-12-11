@@ -1,6 +1,6 @@
 <script>
 export default {
-    name: "MotivationsTable",
+    name: "UsersTable",
     props: {
         items: Array  
     }
@@ -11,18 +11,18 @@ export default {
     <table class="table table-striped">
         <thead class="table-dark">
             <tr>
-                <th>Quote</th>
+                <th>MotivationID</th>
                 <th>Date</th>
-                <th>UserID</th>
-                <th>Likes</th>
+                <th>UserName</th>
+                <th>Password</th>
             </tr>
         </thead>
         <tbody>
-            <tr v-for="item in items" :key="item.MotivationID">
-                <td>{{item.Quote}}</td>
+            <tr v-for="item in items" :key="item.UserID">
+                <td>{{item.MotivationID}}</td>
                 <td>{{item.Date}}</td>
-                <td>{{item.UserID}}</td>
-                <td>{{item.Likes}}</td>
+                <td>{{item.UserName}}</td>
+                <td>{{item.Password}}</td>
             </tr>
         </tbody>
     </table>

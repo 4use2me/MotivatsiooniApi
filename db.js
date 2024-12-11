@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes} = require("sequelize");  
-const sequelize = new sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+const sequelize = new Sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOSTNAME,
     dialect: "mariadb",
     logging: console.log,
@@ -16,8 +16,9 @@ const sequelize = new sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME
 
 const db = {};
 db.Sequelize = Sequelize;
-db.Sequelize = sequelize;
-db.motivations = require("./Models/Motivation")(sequelize, DataTypes);
+db.sequelize = sequelize;
+db.motivations = require("./models/motivation")(sequelize, DataTypes);
+db.users = require("./models/user")(sequelize, DataTypes);
 
 const sync = (async () => {
     await sequelize.sync({ alter: true });
