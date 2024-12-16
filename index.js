@@ -22,6 +22,9 @@ app.get("/", (req, res) => {
 })
 
 require("./routes/motivationRoutes")(app)
+require("./routes/userRoutes")(app)
+
+
 
 //Methods of motivations
 // const motivations =[

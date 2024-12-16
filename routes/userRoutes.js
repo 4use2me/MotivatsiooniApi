@@ -1,4 +1,4 @@
-const UsersController = require ('../controllers/UsersCotroller');
+const UsersController = require ('../controllers/UsersController');
 
 module.exports = (app) => { 
     app.route("/users")
