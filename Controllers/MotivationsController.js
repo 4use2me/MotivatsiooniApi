@@ -1,9 +1,10 @@
 const {db} =require("../db");
 const Utils = require("./utils");
 
+
 exports.getAll = async (req, res) => {
     const motivations = await db.motivations.findAll();
-    res.send (motivations.map(({id, quote}) => {return {id, quote}}))
+    res.send (motivations.map(({ID, Quote, Date, UserID, Likes}) => {return {ID, Quote, Date, UserID, Likes}}))
 }
 
 exports.getById = async (req, res) => {

@@ -7,7 +7,7 @@ export default {
     allMotivations: [],
     allUsers: []
   }},
-  async Created() {
+  async created() {
     this.allMotivations = await (await fetch("http://localhost:8080/motivations")).json()
     this.allUsers = await (await fetch("http://localhost:8080/users")).json()
   }
