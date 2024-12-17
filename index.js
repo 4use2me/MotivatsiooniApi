@@ -21,7 +21,8 @@ app.get("/", (req, res) => {
     res.send(`Server running. Documentation at <a href="http://${host}:${port}/docs">/docs</a>`);
 })
 
-require("./routes/motivationRoutes")(app)
+require("./routes/motivationRoutes")(app);
+require("./routes/userRoutes")(app);
 
 //Methods of motivations
 // const motivations =[
