@@ -3,61 +3,54 @@ require('dotenv').config();
 const port = process.env.PORT || 8080;
 const host = 'localhost';
 const express = require('express');
+const { db, sync } = require('./db'); // Impordi db ja sync
 const app = express();
-
 const cors = require('cors');
 const yamljs = require('yamljs');
 const swaggerUI = require('swagger-ui-express');
 const swaggerDoc = yamljs.load("./docs/swagger.yaml");
-
-const {sync} = require('./db');
 
 app.use(cors());
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 app.use(express.json());
 
+
+
 app.get("/", (req, res) => {
     res.send(`Server running. Documentation at <a href="http://${host}:${port}/docs">/docs</a>`);
 })
 
-require("./routes/motivationRoutes")(app)
+app.post('/login', async (req, res) => {
+    console.log(req.body);
+    const { UserName, Password } = req.body;
+    console.log('Sisestatud andmed:', UserName, Password);
 
-//Methods of motivations
-// const motivations =[
-//     {
-//         ID: 1,
-//         Quote:"esimene tsitaat",
-//         Date: "25.11.2024",
-//         UserID: 1,
-//         Likes: 10
-//     },
-//     {
-//         ID: 2,
-//         Quote:"teine tsitaat",
-//         Date: "25.11.2024",
-//         UserID: 2,
-//         Likes: 9
-//     }
-// ]
+    if (!UserName || !Password) {
+        return res.status(400).json({ error: 'Kasutajanimi ja parool on kohustuslikud' });
+    }
 
-// Methods of users  
-// const users =[
-//     {
-//         ID: 1,
-//         MotivationID:1,
-//         Date: "25.11.2024",
-//         UserName: "Aigi",
-//         Password: "Aigi123"
-//     },
-//     {
-//         ID: 2,
-//         MotivationID:2,
-//         Date: "26.11.2024",
-//         UserName: "Pia",
-//         Password: "Pia321"
-//     }
-// ]
+    try {
+        // Leia kasutaja andmebaasist
+        const user = await db.users.findOne({
+            where: { UserName, Password }, // Kontrolli nii kasutajanime kui ka parooli
+        });
+        console.log(user);
+
+        if (user) {
+            res.json({ message: 'Logimine õnnestus', user: { UserName: user.UserName } });
+        } else {
+            res.status(401).json({ error: 'Vale kasutajanimi või parool' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Serveri viga' });
+    }
+});
+
+require("./routes/motivationRoutes")(app);
+require("./routes/userRoutes")(app);
+
 
 // Methods of ownerships  
 const ownerships =[

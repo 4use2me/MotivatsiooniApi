@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const Motivation = sequelize.define(
         "Motivation",
         {
-            ID: {
+            MotivationID: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,

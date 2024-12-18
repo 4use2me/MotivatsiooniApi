@@ -3,7 +3,8 @@ const Utils = require("./utils");
 
 exports.getAll = async (req, res) => {
     const users = await db.users.findAll();
-    res.send (users.map(({id, userName}) => {return {id, userName}}))
+    console.log('Leitud kasutajad:', users);
+    res.send (users.map(({UserID, UserName, Password, MotivationID}) => {return {UserID, UserName, Password, MotivationID}}))
 }
 exports.getById = async (req, res) => {
     const user = await getUser(req, res);
