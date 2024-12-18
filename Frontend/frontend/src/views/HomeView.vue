@@ -1,6 +1,7 @@
 <script>
 import MotivationsTable from '../components/MotivationsTable.vue'
 import UsersTable from '../components/UsersTable.vue'
+
 export default {
   components: {MotivationsTable, UsersTable},
   data() {return {
