@@ -1,10 +1,40 @@
 const {db} =require("../db");
 const Utils = require("./utils");
+const authenticate = require('../controllers/authMiddleware');
 
-exports.getAll = async (req, res) => {
-    const motivations = await db.motivations.findAll();
-    res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
-}
+// exports.getAll = async (req, res) => {
+//     const motivations = await db.motivations.findAll();
+//     res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
+// }
+
+exports.getAll = [authenticate, async (req, res) => {
+    try {
+        // Eeldame, et token on kontrollitud ja kasutaja on autentitud
+        // Tokenist saame userId ja selle järgi otsime motivatsioonid
+
+        const UserID = req.UserID;  // Kasutame authenticate middleware'is määratud userId-d
+        if (!UserID) {
+            console.error('Kasutaja ID on määramata');
+            return res.status(400).json({ error: 'Kasutaja ID puudub' });
+        }
+
+        // Leia ainult selle kasutaja motivatsioonid
+        const motivations = await db.motivations.findAll({
+            where: { UserID: req.UserID } // Filtreerime motivatsioonid kasutaja järgi
+        });
+        console.log("Motivatsioonid andmebaasist:", motivations);
+
+        if (motivations.length === 0) {
+            return res.status(404).json({ message: 'Motivatsioone ei leitud' });
+        }
+
+        // Tagasta motivatsioonide nimekiri
+        res.status(200).json({ motivations });
+    } catch (error) {
+        console.error('Viga motivatsioonide andmete pärimisel:', error);
+        res.status(500).json({ error: 'Serveri viga' });
+    }
+}];
 
 exports.getById = async (req, res) => {
     const motivation = await getMotivation(req, res);

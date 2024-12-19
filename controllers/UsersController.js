@@ -1,5 +1,6 @@
 const {db} =require("../db");
 const Utils = require("./utils");
+const jwt = require('jsonwebtoken');
 
 exports.getAll = async (req, res) => {
     const users = await db.users.findAll();
@@ -34,9 +35,7 @@ exports.create = async (req, res) => {
 }      
 
 exports.login = async (req, res) => {
-    console.log(req.body);
     const { UserName, Password } = req.body;
-    console.log('Sisestatud andmed:', UserName, Password);
 
     if (!UserName || !Password) {
         return res.status(400).json({ error: 'Kasutajanimi ja parool on kohustuslikud' });
@@ -45,12 +44,27 @@ exports.login = async (req, res) => {
     try {
         // Leia kasutaja andmebaasist
         const user = await db.users.findOne({
-            where: { UserName, Password }, // Kontrolli nii kasutajanime kui ka parooli
+            where: { UserName },
         });
-        console.log(user);
+        console.log("Kasutaja ID andmebaasist:", user?.UserID);
 
         if (user) {
-            res.json({ message: 'Logimine õnnestus', user: { UserName: user.UserName } });
+            const isPasswordValid = user.Password === Password;  // Võiks kasutada bcrypti parooli kontrolliks
+
+            if (isPasswordValid) {
+                // Generaadi token
+                const token = jwt.sign({ UserID: user.UserID }, 'MySecretKey123', { expiresIn: '1h' });
+
+                // Saatke token vastusesse
+                console.log("Generated token:", token);
+                res.json({
+                    message: 'Logimine õnnestus',
+                    user: { UserName: user.UserName },
+                    token, // Tokeni saatmine koos vastusega
+                });
+            } else {
+                res.status(401).json({ error: 'Vale kasutajanimi või parool' });
+            }
         } else {
             res.status(401).json({ error: 'Vale kasutajanimi või parool' });
         }
@@ -58,7 +72,7 @@ exports.login = async (req, res) => {
         console.error('Error during login:', error);
         res.status(500).json({ error: 'Serveri viga' });
     }
-}
+};
 
 exports.editById = async (req, res) => {
     const user = await getUser(req, res);
