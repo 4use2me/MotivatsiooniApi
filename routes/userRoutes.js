@@ -1,4 +1,4 @@
-const UsersController = require('../controllers/usersController');
+const UsersController = require('../controllers/UsersController');
 module.exports = (app) => { 
     app.route("/users")
        .get(UsersController.getAll)   
@@ -7,4 +7,6 @@ module.exports = (app) => {
         .get(UsersController.getById)
         .put(UsersController.editById)
         .delete(UsersController.deleteById)
+    app.route("/login")
+        .post(UsersController.login)
 }

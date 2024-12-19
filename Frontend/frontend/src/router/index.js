@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Login from '../views/Login.vue'
+import AuthView from "@/views/AuthView.vue"; // AuthView tuleb views kaustast
+import LoggedInUserView from "@/views/LoggedInUserView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,14 +20,16 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login, // Siin viitad login.vue failile
+      path: "/auth",
+      name: "AuthView",
+      component: AuthView,
     },
-  {
-    path: '/',
-    redirect: '/login', // Peamine leht suunab loginile
-  },
+    {
+      path: "/loggedin/:username",
+      name: "LoggedInUserView",
+      component: LoggedInUserView,
+      props: true, // Edasta parameeter propsina
+    },
   ],
 })
 

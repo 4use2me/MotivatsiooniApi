@@ -10,25 +10,54 @@ exports.getById = async (req, res) => {
     const user = await getUser(req, res);
     if (!user) { return};
     return res.send(user);
-    }
+}
 
 exports.create = async (req, res) => {
-    if (
-    !req.body.UserName ||
-    !req.body.Password) 
-    {   
-        return res.status(400).send
-        ({error: "One or multiple parameters are missing"});
+    const { UserName, Password } = req.body;
+  
+    if (!UserName || !Password) {
+      return res.status(400).json({ error: "One or multiple parameters are missing" });
+    }
+  
+    try {
+      const existingUser = await db.users.findOne({ where: { UserName } });
+      if (existingUser) {
+        return res.status(409).json({ error: "Kasutajanimi on juba kasutusel." });
+      }
+  
+      const newUser = await db.users.create({ UserName, Password });
+      res.status(201).json({ message: "Kasutaja registreeritud edukalt.", user: newUser });
+    } catch (error) {
+      console.error("Viga kasutaja loomisel:", error);
+      res.status(500).json({ error: "Serveri viga." });
+    }
+}      
+
+exports.login = async (req, res) => {
+    console.log(req.body);
+    const { UserName, Password } = req.body;
+    console.log('Sisestatud andmed:', UserName, Password);
+
+    if (!UserName || !Password) {
+        return res.status(400).json({ error: 'Kasutajanimi ja parool on kohustuslikud' });
     }
 
-    let newUser = {
-        UserName: req.body.UserName,
-        Password: req.body.Password
+    try {
+        // Leia kasutaja andmebaasist
+        const user = await db.users.findOne({
+            where: { UserName, Password }, // Kontrolli nii kasutajanime kui ka parooli
+        });
+        console.log(user);
+
+        if (user) {
+            res.json({ message: 'Logimine õnnestus', user: { UserName: user.UserName } });
+        } else {
+            res.status(401).json({ error: 'Vale kasutajanimi või parool' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Serveri viga' });
     }
-    const createdUser = await db.users.create(newUser);
-    res.status(201)
-    .location(`${Utils.getBaseURL(req)}/users/${createdUser.UserID}`)
-    .send(createdUser.UserID);
 }
 
 exports.editById = async (req, res) => {
