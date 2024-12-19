@@ -2,12 +2,12 @@ const {db} =require("../db");
 const Utils = require("./utils");
 const authenticate = require('../controllers/authMiddleware');
 
-// exports.getAll = async (req, res) => {
-//     const motivations = await db.motivations.findAll();
-//     res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
-// }
+exports.getAll = async (req, res) => {
+    const motivations = await db.motivations.findAll();
+    res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
+}
 
-exports.getAll = [authenticate, async (req, res) => {
+exports.getUsersMotivations = [authenticate, async (req, res) => {
     try {
         // Eeldame, et token on kontrollitud ja kasutaja on autentitud
         // Tokenist saame userId ja selle järgi otsime motivatsioonid

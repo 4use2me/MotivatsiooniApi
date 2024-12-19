@@ -52,7 +52,7 @@ export default {
       const token = localStorage.getItem("token"); // Tokeni saamine localStorage'st
       console.log("Token:", token);
       try {
-        const response = await fetch("http://localhost:8080/motivations/", {
+        const response = await fetch("http://localhost:8080/motivations/user", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
