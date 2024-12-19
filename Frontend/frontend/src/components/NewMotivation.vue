@@ -26,12 +26,14 @@ export default {
   methods: {
     async submitMotivation() {
       const token = localStorage.getItem('token'); // Token localStorage'st
-      const userId = this.$route.params.userId || 1; // Kasutaja ID (või vaikimisi 1, kui pole saadaval)
+      if (!token) {
+        console.error('Token puudub. Palun logi sisse.');
+        return;
+      }
 
       const newMotivation = {
         Quote: this.quote,
         Likes: 1, // Meeldimiste arvu vaikimisi väärtus
-        UserID: userId,
       };
 
       try {

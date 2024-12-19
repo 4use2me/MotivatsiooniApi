@@ -42,72 +42,27 @@ exports.getById = async (req, res) => {
     return res.send(motivation);
     }
 
-exports.create = async (req, res) => {
-    if (!req.body.Quote || !req.body.Likes || !req.body.UserID) {   
-        console.log(req.body.Quote);
-        console.log(req.body.Likes);
-        console.log(req.body.UserID);
-        return res.status(400).send({ error: "One or multiple parameters are missing" });
+exports.create = [authenticate, async (req, res) => {
+  try {
+    const { Quote, Likes } = req.body;
+    const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
+
+    if (!Quote) {
+      return res.status(400).json({ error: 'Tsitaat on kohustuslik' });
     }
 
-    // Teisenda UserID ja Likes integeriteks
-    const userID = parseInt(req.body.UserID, 10);
-    const likes = parseInt(req.body.Likes, 10);
+    const newMotivation = await db.motivations.create({
+      Quote,
+      Likes: Likes || 1, // Kui Likes pole määratud, siis vaikimisi 1
+      UserID, // Seotakse sisseloginud kasutajaga
+    });
 
-    // Kontrolli, kas teisendamine õnnestus
-    if (isNaN(userID) || isNaN(likes)) {
-        return res.status(400).send({
-            error: "UserID and Likes must be integers"
-        });
-    }
-
-    let newMotivation = {
-        Quote: req.body.Quote,
-        Likes: likes,
-        UserID: userID
-    };
-
-    const createdMotivation = await db.motivations.create(newMotivation);
-
-    res.status(201)
-        .location(`${Utils.getBaseURL(req)}/motivations/${createdMotivation.MotivationID}`)
-        .send(createdMotivation.MotivationID);
-};
-
-exports.create = async (req, res) => {
-    console.log('Received request:', req.body); // Lisa logi
-    if (!req.body.Quote || !req.body.Likes || !req.body.UserID) {   
-        console.log('Missing parameters:', req.body);
-        return res.status(400).send({ error: "One or multiple parameters are missing" });
-    }
-
-    const userID = parseInt(req.body.UserID, 10);
-    const likes = parseInt(req.body.Likes, 10);
-
-    if (isNaN(userID) || isNaN(likes)) {
-        console.log('Invalid UserID or Likes');
-        return res.status(400).send({
-            error: "UserID and Likes must be integers"
-        });
-    }
-
-    try {
-        const newMotivation = {
-            Quote: req.body.Quote,
-            Likes: likes,
-            UserID: userID,
-        };
-
-        const createdMotivation = await db.motivations.create(newMotivation);
-
-        res.status(201)
-            .location(`${Utils.getBaseURL(req)}/motivations/${createdMotivation.MotivationID}`)
-            .send({ MotivationID: createdMotivation.MotivationID });
-    } catch (error) {
-        console.error('Error creating motivation:', error);
-        res.status(500).send({ error: 'Server error' });
-    }
-};
+    res.status(201).json(newMotivation);
+  } catch (error) {
+    console.error('Viga motivatsiooni loomisel:', error);
+    res.status(500).json({ error: 'Serveri viga' });
+  }
+}];
 
 exports.editById = async (req, res) => {
     const motivation = await getMotivation(req, res);
