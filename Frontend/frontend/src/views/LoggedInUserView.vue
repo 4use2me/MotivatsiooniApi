@@ -16,13 +16,13 @@
     <div v-if="motivations.length">
       <h3>Sinu motivatsioonid:</h3>
       <!-- Kasutame MotivationsTable komponenti -->
-      <MotivationsTable :items="motivations" />
+      <UsersMotivations :items="motivations" />
     </div>
   </div>
 </template>
 
 <script>
-import MotivationsTable from '../components/UsersMotivations.vue'; // Importige komponent
+import UsersMotivations from '../components/UsersMotivations.vue'; // Importige komponent
 import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
 
 export default {
@@ -76,7 +76,7 @@ export default {
     this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
   },
   components: {
-    MotivationsTable, // Registreerige MotivationsTable komponent
+    UsersMotivations, // Registreerige MotivationsTable komponent
     NewMotivation, // Registreerige NewMotivation komponent
   },
 };

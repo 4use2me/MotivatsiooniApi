@@ -1,14 +1,18 @@
 <template>
   <div>
-    <input
-      v-model="quote"
-      type="text"
-      placeholder="Sisesta motivatsioonitsitaat"
-      class="form-control mb-2"
-    />
-    <button @click="createMotivation" class="btn btn-primary">
-      Salvesta motivatsioon
-    </button>
+    <form @submit.prevent="submitMotivation">
+      <div>
+        <label for="quote">Tsitaat:</label>
+        <input
+          type="text"
+          id="quote"
+          v-model="quote"
+          placeholder="Sisesta tsitaat"
+          required
+        />
+      </div>
+      <button type="submit">Salvesta</button>
+    </form>
   </div>
 </template>
 
@@ -16,41 +20,41 @@
 export default {
   data() {
     return {
-      quote: "",
+      quote: '', // Motivatsiooni tsitaat
     };
   },
   methods: {
-    async createMotivation() {
-      if (!this.quote) {
-        alert("Palun sisesta tsitaat!");
-        return;
-      }
+    async submitMotivation() {
+      const token = localStorage.getItem('token'); // Token localStorage'st
+      const userId = this.$route.params.userId || 1; // Kasutaja ID (või vaikimisi 1, kui pole saadaval)
+
+      const newMotivation = {
+        Quote: this.quote,
+        Likes: 1, // Meeldimiste arvu vaikimisi väärtus
+        UserID: userId,
+      };
 
       try {
-        const response = await fetch("http://localhost:8080/motivations", {
-          method: "POST",
+        const response = await fetch('http://localhost:8080/motivations/', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            Quote: this.quote,
-            Likes: 0, // Algväärtusena 0
-            UserID: 1, // Asenda see reaalsete andmetega
-          }),
+          body: JSON.stringify(newMotivation),
         });
 
-        const result = await response.json();
-
-        if (response.ok) {
-          alert("Motivatsioon lisatud!");
-          this.$emit("motivationCreated", result.MotivationID);
-          this.quote = ""; // Tühjenda sisend pärast lisamist
-        } else {
-          alert("Motivatsiooni lisamine ebaõnnestus");
+        if (!response.ok) {
+          console.error('Motivatsiooni salvestamine ebaõnnestus');
+          return;
         }
+
+        this.quote = ''; // Vorm tühjaks
+
+        // Emit sündmus, et teavitada vanemat komponenti
+        this.$emit('motivationCreated');
       } catch (error) {
-        alert("Ühendus ebaõnnestus");
-        console.error(error);
+        console.error('Viga motivatsiooni salvestamisel:', error);
       }
     },
   },
@@ -58,5 +62,12 @@ export default {
 </script>
 
 <style scoped>
-/* Soovi korral lisa stiile */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+button {
+  align-self: flex-start;
+}
 </style>
