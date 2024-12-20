@@ -18,15 +18,24 @@
       <!-- Kasutame MotivationsTable komponenti -->
       <UsersMotivations :items="motivations"
       @deleteMotivation="deleteMotivation"
-      @editMotivation="editMotivation"
+      @editMotivation="startEditingMotivation"
       />
     </div>
+
+     <!-- Muutmise vorm -->
+     <UpdateMotivation
+      v-if="editingMotivation"
+      :motivation="editingMotivation"
+      @motivationUpdated="onMotivationUpdated"
+      @cancelEdit="cancelEditingMotivation"
+    />
   </div>
 </template>
 
 <script>
 import UsersMotivations from '../components/UsersMotivations.vue'; // Importige komponent
 import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
+import UpdateMotivation from "../components/UpdateMotivation.vue";
 
 export default {
   props: {
@@ -39,8 +48,10 @@ export default {
     return {
       motivations: [], // Motivatsioonide loend
       showMotivationForm: false, // Motiveerimisvormi näitamine
+      editingMotivation: null, // Hetkel redigeeritav motivatsioon
     };
   },
+
   methods: {
     logout() {
       localStorage.removeItem('token'); // Eemalda token LocalStorage'ist
@@ -100,11 +111,16 @@ export default {
       }
     },
 
-    editMotivation(motivation) {
-      this.showMotivationForm = true; // Näita muutmise vormi
-      this.$nextTick(() => {
-        this.$refs.newMotivationForm.populateForm(motivation); // Edasta andmed vormile
-      });
+    startEditingMotivation(motivation) {
+      console.log("Redigeeritav motivatsioon:", motivation);
+      this.editingMotivation = motivation; // Määra hetkel redigeeritav motivatsioon
+    },
+    onMotivationUpdated() {
+      this.editingMotivation = null; // Lõpeta muutmine
+      this.fetchMotivations(); // Uuenda loendit
+    },
+    cancelEditingMotivation() {
+      this.editingMotivation = null; // Katkesta muutmine
     },
   },
   mounted() {
@@ -113,6 +129,7 @@ export default {
   components: {
     UsersMotivations, // Registreerige UsersMotivations komponent
     NewMotivation, // Registreerige NewMotivation komponent
+    UpdateMotivation,
   },
 };
 </script>
