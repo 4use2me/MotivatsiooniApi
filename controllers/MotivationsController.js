@@ -36,12 +36,6 @@ exports.getUsersMotivations = [authenticate, async (req, res) => {
     }
 }];
 
-exports.getById = async (req, res) => {
-    const motivation = await getMotivation(req, res);
-    if (!motivation) { return};
-    return res.send(motivation);
-    }
-
 exports.create = [authenticate, async (req, res) => {
   try {
     const { Quote, Likes } = req.body;
@@ -64,40 +58,66 @@ exports.create = [authenticate, async (req, res) => {
   }
 }];
 
-exports.editById = async (req, res) => {
+exports.getById = async (req, res) => {
     const motivation = await getMotivation(req, res);
     if (!motivation) { return};
-    if (!req.body.Quote ||
-        !req.body.UserID)
-    {
-        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
+    return res.send(motivation);
     }
-    motivation.Quote = req.body.Quote
-    motivation.Likes = parseInt(req.body.Likes, 10)
-    motivation.UserID = parseInt(req.body.UserID, 10)
-    await motivation.save();
-    return res.status(200) // Tagasta 200 OK
-        .location(`${Utils.getBaseURL(req)}/motivations/${motivation.MotivationID}`)
-        .send(motivation);
-}
 
-exports.deleteById = async (req, res) => {
-    const motivation = await getMotivation(req, res);
-    if (!motivation) { return};
-    await motivation.destroy(); // Kustuta motivatsioon andmebaasist 
-    res.status(204).send(); // Tagasta 204 ilma sisuta
-}
+    exports.editById = [authenticate, async (req, res) => {
+        const motivation = await getMotivation(req, res);
+        if (!motivation) { return; }
+    
+        // Kontrolli, kas kasutaja saab muuta ainult oma tsitaate
+        if (motivation.UserID !== req.UserID) {
+            return res.status(403).json({ error: "Sul pole luba seda tsitaati muuta." });
+        }
+    
+        const { Quote, Likes } = req.body;
+        if (!Quote) {
+            return res.status(400).json({ error: "Tsitaadi tekst on kohustuslik." });
+        }
+    
+        motivation.Quote = Quote;
+        motivation.Likes = Likes || motivation.Likes; // Jätame vanad Likes, kui uut väärtust pole
+        await motivation.save();
+    
+        return res.status(200).json(motivation); // Tagasta uuendatud tsitaat
+    }];
+    
+    exports.deleteById = [authenticate, async (req, res) => {
+        console.log('Päringu parameetrid:', req.params);
+        const idNumber = parseInt(req.params.id); // Kasutame "id" mitte "MotivationID"
+        if (isNaN(idNumber)) {
+            res.status(400).send({ error: "Invalid motivation ID" });
+            return;
+        }
+    
+        const motivation = await db.motivations.findByPk(idNumber);
+        if (!motivation) {
+            res.status(404).send({ error: "Motivation not found" });
+            return;
+        }
+    
+        // Kontrollige, kas kasutaja saab kustutada ainult oma tsitaate
+        if (motivation.UserID !== req.UserID) {
+            return res.status(403).json({ error: "Sul pole luba seda tsitaati kustutada." });
+        }
+    
+        await motivation.destroy(); // Kustuta tsitaat
+        return res.status(204).send(); // Tagasta 204 ilma sisuta
+    }];    
 
-const getMotivation = async (req, res) => {
-    const idNumber = parseInt(req.params.MotivationID);
-    if (isNaN(idNumber)) {
-        res.status(400).send({error: "Invalid motivation ID"});
-        return null;
+    const getMotivation = async (req, res) => {
+        const idNumber = parseInt(req.params.MotivationID);
+        if (isNaN(idNumber)) {
+            res.status(400).send({error: "Invalid motivation ID"});
+            return null;
+        }
+        const motivation = await db.motivations.findByPk(idNumber); 
+        if (!motivation) {
+            res.status(404).send({error: "Motivation not found"});
+            return null;
+        }
+        return motivation;
     }
-    const motivation = await db.motivations.findByPk(idNumber); 
-    if (!motivation) {
-        res.status(404).send({error: "Motivation not found"});
-        return null;
-    }
-    return motivation;
-}

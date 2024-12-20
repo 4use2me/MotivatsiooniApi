@@ -1,28 +1,34 @@
-<script>
-export default {
-    name: "UsersMotivations",
-    props: {
-        items: Array  
-    }
-}
-</script>
-
 <template>
     <table class="table table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Quote</th>
-                <th>Likes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="item in items" :key="item.MotivationID">
-                <td>{{item.Quote}}</td>
-                <td>{{item.Likes}}</td>
-            </tr>
-        </tbody>
+      <thead class="table-dark">
+        <tr>
+          <th>Tsitaadid</th>
+          <th>Meeldimised</th>
+          <th>Tegevused</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in items" :key="item.MotivationID">
+          <td>{{ item.Quote }}</td>
+          <td>{{ item.Likes }}</td>
+          <td>
+          <button @click="$emit('editMotivation', item)">Muuda</button>
+          <button @click="$emit('deleteMotivation', item.MotivationID)">Kustuta</button>
+        </td>
+        </tr>
+      </tbody>
     </table>
-</template>
-
-<style scoped>
-</style>
+  </template>
+  
+  <script>
+  export default {
+    name: "UsersMotivations",
+    props: {
+      items: {
+        type: Array,
+        required: true,
+      },
+    },
+  };
+  </script>
+  
