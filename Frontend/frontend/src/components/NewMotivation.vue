@@ -12,22 +12,32 @@
         />
       </div>
       <button type="submit">Salvesta</button>
+      <p v-if="successMessage" class="success">{{ successMessage }}</p>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
       quote: '', // Motivatsiooni tsitaat
+      successMessage: '', // Eduka tegevuse teade
+      errorMessage: '' // Veateade
     };
   },
   methods: {
     async submitMotivation() {
+      // Tühjenda varasemad teated enne uue taotluse esitamist
+      this.successMessage = '';
+      this.errorMessage = '';
+
       const token = localStorage.getItem('token'); // Token localStorage'st
       if (!token) {
-        console.error('Token puudub. Palun logi sisse.');
+        this.errorMessage = 'Token puudub. Palun logi sisse.';
         return;
       }
 
@@ -37,26 +47,24 @@ export default {
       };
 
       try {
-        const response = await fetch('http://localhost:8080/motivations/', {
-          method: 'POST',
+        const response = await axios.post('http://localhost:8080/motivations', newMotivation, {
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(newMotivation),
         });
 
-        if (!response.ok) {
-          console.error('Motivatsiooni salvestamine ebaõnnestus');
-          return;
+        if (response.status === 201) {
+          this.successMessage = 'Tsitaat lisatud edukalt!';
+          this.quote = ''; // Vorm tühjaks
+          this.$emit('motivationCreated'); // Emit sündmus vanemale
         }
-
-        this.quote = ''; // Vorm tühjaks
-
-        // Emit sündmus, et teavitada vanemat komponenti
-        this.$emit('motivationCreated');
-      } catch (error) {
-        console.error('Viga motivatsiooni salvestamisel:', error);
+        } catch (error) {
+        // Kui server tagastab veateate, kuvame selle
+        if (error.response && error.response.data.error) {
+          this.errorMessage = error.response.data.error; // Serveri veateade
+        } else {
+          this.errorMessage = 'Tsitaadi lisamine ebaõnnestus. Proovi uuesti.';
+        }
       }
     },
   },
@@ -71,5 +79,11 @@ form {
 }
 button {
   align-self: flex-start;
+}
+.success {
+  color: green;
+}
+.error {
+  color: red;
 }
 </style>

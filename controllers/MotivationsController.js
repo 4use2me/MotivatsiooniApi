@@ -45,6 +45,15 @@ exports.create = [authenticate, async (req, res) => {
       return res.status(400).json({ error: 'Tsitaat on kohustuslik' });
     }
 
+    // Kontrolli, kas tsitaat juba eksisteerib
+    const existingMotivation = await db.motivations.findOne({
+        where: { Quote },
+      });
+  
+      if (existingMotivation) {
+        return res.status(400).json({ error: 'Sama tsitaat on juba olemas.' });
+      }
+
     const newMotivation = await db.motivations.create({
       Quote,
       Likes: Likes || 1, // Kui Likes pole määratud, siis vaikimisi 1
@@ -79,8 +88,10 @@ exports.editById = [authenticate, async (req, res) => {
     }
     
     motivation.Quote = Quote;
-    motivation.Likes = Likes || motivation.Likes; // Jätame vanad Likes, kui uut väärtust pole
+    //motivation.Likes = Likes || motivation.Likes; // Jätame vanad Likes, kui uut väärtust pole
     await motivation.save();
+    
+    console.log("Uuendatud motivatsioon:", motivation);
     
     return res.status(200).json(motivation); // Tagasta uuendatud tsitaat
 }];
