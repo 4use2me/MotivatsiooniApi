@@ -92,8 +92,15 @@ export default {
         console.error("MotivationID on määramata!");
         return;
       }
+
       const token = localStorage.getItem("token"); // Token localStorage'st
+      if (!token) {
+        console.error("Token puudub. Palun logi sisse.");
+        return;
+      }
+
       try {
+        // Tee DELETE päring
         const response = await fetch(`http://localhost:8080/motivations/${MotivationID}`, {
           method: "DELETE",
           headers: {
@@ -102,9 +109,21 @@ export default {
         });
 
         if (response.ok) {
-          this.fetchMotivations(); // Uuenda pärast kustutamist
+          console.log("Motivatsioon kustutatud:", MotivationID);
+      
+          // Eemalda kustutatud motivatsioon lokaalsest nimekirjast
+          this.motivations = this.motivations.filter(
+            (motivation) => motivation.MotivationID !== MotivationID
+          );
+
+          // Kui nimekiri on tühi, tee kindel signaal renderdamiseks
+          if (this.motivations.length === 0) {
+            console.log("Motivatsioonide nimekiri on nüüd tühi.");
+            this.motivations = [];
+          }
         } else {
-          console.error("Motivatsiooni kustutamine ebaõnnestus:", await response.json());
+          const errorData = await response.json();
+          console.error("Motivatsiooni kustutamine ebaõnnestus:", errorData);
         }
       } catch (error) {
         console.error("Viga motivatsiooni kustutamisel:", error);
