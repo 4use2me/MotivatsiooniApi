@@ -1,13 +1,11 @@
 <script>
 import MotivationsTable from '../components/MotivationsTable.vue'
 import UsersTable from '../components/UsersTable.vue'
-import RandomMotivation from '../components/RandomMotivation.vue';
 export default {
-  components: {MotivationsTable, UsersTable, RandomMotivation},
+  components: {MotivationsTable, UsersTable},
   data() {return {
     allMotivations: [],
-    allUsers: [],
-    RandomMotivation,
+    allUsers: []
   }},
   async created() {
     this.allMotivations = await (await fetch("http://localhost:8080/motivations")).json()
@@ -17,6 +15,8 @@ export default {
 </script>
 
 <template>
-    <RandomMotivation />    
+  <main>
+    <MotivationsTable :items="allMotivations" />
+    <UsersTable :items="allUsers" />
+  </main>
 </template>
-

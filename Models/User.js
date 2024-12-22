@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             MotivationID: {
                 type: DataTypes.INTEGER,
+                allowNull: true,
             },
             Date: {
                 type: DataTypes.DATEONLY,

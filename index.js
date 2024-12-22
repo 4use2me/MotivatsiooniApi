@@ -25,43 +25,6 @@ require("./routes/motivationRoutes")(app)
 require("./routes/userRoutes")(app)
 
 
-
-//Methods of motivations
-// const motivations =[
-//     {
-//         ID: 1,
-//         Quote:"esimene tsitaat",
-//         Date: "25.11.2024",
-//         UserID: 1,
-//         Likes: 10
-//     },
-//     {
-//         ID: 2,
-//         Quote:"teine tsitaat",
-//         Date: "25.11.2024",
-//         UserID: 2,
-//         Likes: 9
-//     }
-// ]
-
-// Methods of users  
-// const users =[
-//     {
-//         ID: 1,
-//         MotivationID:1,
-//         Date: "25.11.2024",
-//         UserName: "Aigi",
-//         Password: "Aigi123"
-//     },
-//     {
-//         ID: 2,
-//         MotivationID:2,
-//         Date: "26.11.2024",
-//         UserName: "Pia",
-//         Password: "Pia321"
-//     }
-// ]
-
 // Methods of ownerships  
 const ownerships =[
     {

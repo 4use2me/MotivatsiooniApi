@@ -88,3 +88,27 @@ const getMotivation = async (req, res) => {
     }
     return motivation;
 }
+exports.getRandom = async (req, res) => {
+    try {
+        const randomMotivation = await db.motivations.findOne({
+            order: db.sequelize.random(), // Randomly fetch one record
+        });
+
+        // Handle the case where no quotes exist
+        if (!randomMotivation) {
+            return res.status(404).send({ error: "No quotes available" });
+        }
+
+        // Return the random quote
+        return res.send({
+            ID: randomMotivation.ID,
+            Quote: randomMotivation.Quote,
+            Date: randomMotivation.Date,
+            UserID: randomMotivation.UserID,
+            Likes: randomMotivation.Likes,
+        });
+    } catch (error) {
+        console.error("Error fetching random quote:", error);
+        return res.status(500).send({ error: "An error occurred while fetching a random quote" });
+    }
+};
