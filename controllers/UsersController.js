@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 exports.getAll = async (req, res) => {
     const users = await db.users.findAll();
     console.log('Leitud kasutajad:', users);
-    res.send (users.map(({UserID, UserName, Password, MotivationID}) => {return {UserID, UserName, Password, MotivationID}}))
+    res.send (users.map(({UserID, UserName, Password}) => {return {UserID, UserName, Password}}))
 }
 exports.getById = async (req, res) => {
     const user = await getUser(req, res);
@@ -84,7 +84,6 @@ exports.editById = async (req, res) => {
     {
         return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
     }
-    user.MotivationID = parseInt(req.body.MotivationID, 10)
     user.UserName = req.body.UserName
     user.Password = req.body.Password
     await user.save();
@@ -94,22 +93,68 @@ exports.editById = async (req, res) => {
 }
 
 exports.deleteById = async (req, res) => {
-    const user = await getUser(req, res);
-    if (!user) { return};
-    await user.destroy(); // Kustuta andmebaasist 
-    res.status(204).send(); // Tagasta 204 ilma sisuta
-}
+    try {
+      // Leia kasutaja
+      const user = await getUser(req, res);
+      if (!user) {
+        console.error("Kasutajat ei leitud, kustutamine katkestatud.");
+        return;
+      }
 
-const getUser = async (req, res) => {
-    const idNumber = parseInt(req.params.UserID);
+      // Kontrolli, kas kasutaja objekt on Sequelize instants
+      if (typeof user.destroy !== 'function') {
+        console.error("Tagastatud objekt ei ole Sequelize instants:", user);
+        return res.status(500).json({ error: "Kasutajat ei saa kustutada." });
+      }
+  
+      console.log("Kustutatakse kasutaja ID:", user.UserID);
+  
+      // Kontrolli, kas `destroy` meetod eksisteerib
+      if (typeof user.destroy !== "function") {
+        console.error("Kasutaja objektil puudub 'destroy' meetod:", user);
+        return res.status(500).json({ message: "Kasutaja kustutamine ebaõnnestus." });
+      }
+  
+      // Kustuta seotud motivatsioonid
+      const deletedMotivations = await db.motivations.destroy({
+        where: { UserID: user.UserID },
+      });
+      console.log("Seotud motivatsioonid kustutatud:", deletedMotivations);
+  
+      // Kustuta kasutaja
+      await user.destroy();
+      console.log("Kasutaja kustutatud:", user.UserID);
+  
+      res.status(204).send();
+    } catch (error) {
+      console.error("Viga kasutaja kustutamisel:", error);
+      res.status(500).json({ message: "Viga kasutaja kustutamisel." });
+    }
+  };
+  
+  const getUser = async (req, res) => {
+    const idNumber = parseInt(req.params.id);
+  
     if (isNaN(idNumber)) {
-        res.status(400).send({error: "Invalid user ID"});
-        return null;
+      console.error("Päringus esitatud kasutaja ID on vale:", req.params.id);
+      res.status(400).json({ error: "Invalid user ID" });
+      return null;
     }
-    const user = await db.users.findByPk(idNumber); 
-    if (!user) {
-        res.status(404).send({error: "User not found"});
+  
+    try {
+      const user = await db.users.findByPk(idNumber); // Eemaldatud `raw: true`
+      if (!user) {
+        console.error("Kasutajat ei leitud ID-ga:", idNumber);
+        res.status(404).json({ error: "User not found" });
         return null;
+      }
+  
+      console.log("Leitud kasutaja objekt:", user);
+      return user;
+    } catch (error) {
+      console.error("Viga kasutaja otsimisel:", error);
+      res.status(500).json({ error: "Serveri viga kasutaja otsimisel." });
+      return null;
     }
-    return user;
-}
+  };
+  

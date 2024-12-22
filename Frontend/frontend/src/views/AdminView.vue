@@ -7,7 +7,9 @@
       <div>
         <h3>Kõik kasutajad:</h3>
         <!-- Kasutame UsersTable komponenti -->
-        <UsersTable :items="allUsers" />
+        <UsersTable :items="allUsers" 
+        @deleteUser="deleteUser"
+        />
       </div>
 
       <!-- Motivatsiooni loomise osa -->
@@ -70,6 +72,43 @@
       async fetchUsers() {
         this.allUsers = await (await fetch("http://localhost:8080/users")).json()
       },
+
+      // Kasutaja kustutamine
+      async deleteUser(userID) {
+            console.log("Kustutatav kasutaja ID:", userID);
+            if (!userID) {
+            console.error("Kasutaja ID on määramata!");
+            return;
+            }
+
+            try {
+            // Tee DELETE päring
+            const response = await fetch(`http://localhost:8080/users/${userID}`, {
+                method: "DELETE",
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // Lisa Authorization päis
+                },
+            });
+
+            if (response.ok) {
+                console.log("Kasutaja kustutatud:", userID);
+
+                // Uuenda lokaalne kasutajate nimekiri
+                this.allUsers = this.allUsers.filter((user) => user.UserID !== userID);
+                // Uuenda motivatsioonide nimekiri
+                if (this.motivations) {
+                this.motivations = this.motivations.filter(
+                    (motivation) => motivation.UserID !== userID
+                );
+            }
+            } else {
+                const errorData = await response.json();
+                console.error("Kasutaja kustutamine ebaõnnestus:", errorData);
+            }
+            } catch (error) {
+            console.error("Viga kasutaja kustutamisel:", error);
+            }
+        },
   
       toggleCreateMotivation() {
         this.showMotivationForm = !this.showMotivationForm; // Näita või peida vormi
