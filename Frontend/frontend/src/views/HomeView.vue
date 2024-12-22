@@ -1,11 +1,15 @@
-<script>
-
-
-
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <main>
-   
+   <main>
+    <div>
+      <nav>
+        <RouterLink to="/auth">Registreeri/Logi sisse</RouterLink>
+      </nav>
+    </div>
   </main>
+
+  <RouterView />
 </template>
