@@ -1,9 +1,8 @@
 <script>
-import MotivationsTable from '../components/MotivationsTable.vue'
 import UsersTable from '../components/UsersTable.vue'
 
 export default {
-  components: {MotivationsTable, UsersTable},
+  components: {UsersTable},
   data() {return {
     allMotivations: [],
     allUsers: []
@@ -17,7 +16,6 @@ export default {
 
 <template>
   <main>
-    <MotivationsTable :items="allMotivations" />
     <UsersTable :items="allUsers" />
   </main>
 </template>

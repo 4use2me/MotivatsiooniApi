@@ -1,13 +1,10 @@
 <template>
   <div class="auth-container">
     <div class="forms">
-      <!-- Login Form -->
       <div class="form login-form">
         <h2>Logi sisse</h2>
-        <LoginForm />
+        <LoginForm @loginSuccess="handleLoginSuccess" />
       </div>
-
-      <!-- Register Form -->
       <div class="form register-form">
         <h2>Registreeru</h2>
         <RegisterForm />
@@ -25,6 +22,19 @@ export default {
   components: {
     LoginForm,
     RegisterForm,
+  },
+  methods: {
+    async handleLoginSuccess({ token, UserName }) {
+      // Salvesta token
+      localStorage.setItem("token", token);
+
+      // Kontrolli, kas kasutajanimi on "admin"
+      if (UserName === "admin") {
+        this.$router.push("/admin"); // Admini vaade
+      } else {
+        this.$router.push("/user"); // Tavakasutaja vaade
+      }
+    },
   },
 };
 </script>

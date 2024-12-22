@@ -52,14 +52,16 @@ exports.login = async (req, res) => {
             const isPasswordValid = user.Password === Password;  // Võiks kasutada bcrypti parooli kontrolliks
 
             if (isPasswordValid) {
+                // Kontrolli, kas kasutaja on admin
+                const isAdmin = UserName === 'admin';
                 // Generaadi token
-                const token = jwt.sign({ UserID: user.UserID }, 'MySecretKey123', { expiresIn: '1h' });
+                const token = jwt.sign({ UserID: user.UserID, isAdmin }, 'MySecretKey123', { expiresIn: '1h' });
 
                 // Saatke token vastusesse
                 console.log("Generated token:", token);
                 res.json({
                     message: 'Logimine õnnestus',
-                    user: { UserName: user.UserName },
+                    user: { UserName: user.UserName, isAdmin },
                     token, // Tokeni saatmine koos vastusega
                 });
             } else {

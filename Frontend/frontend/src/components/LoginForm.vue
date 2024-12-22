@@ -46,15 +46,19 @@ export default {
         if (response.ok) {
           alert(result.message); // Logimine õnnestus
           console.log("Kasutaja info:", result.user);
-          
+
           // Salvesta token localStorage'i
           localStorage.setItem("token", result.token);
 
-          // Liigu järgmisele lehele ja edasta kasutajanimi
-          this.$router.push({
-            name: "LoggedInUserView",
-            params: { username: result.user.UserName }, // Saada kasutajanimi routerile
-          });
+          // Kontrolli, kas kasutaja on admin
+          if (this.username.toLowerCase() === "admin") {
+            this.$router.push({ name: "AdminView" }); // Admini vaatesse
+          } else {
+            this.$router.push({
+              name: "LoggedInUserView",
+              params: { username: result.user.UserName }, // Saada kasutajanimi
+            });
+          }
         } else {
           alert(result.error); // Vale kasutajanimi või parool
         }

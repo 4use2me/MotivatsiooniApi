@@ -9,30 +9,38 @@ exports.getAll = async (req, res) => {
 
 exports.getUsersMotivations = [authenticate, async (req, res) => {
     try {
-        // Eeldame, et token on kontrollitud ja kasutaja on autentitud
-        // Tokenist saame userId ja selle järgi otsime motivatsioonid
+        if (req.isAdmin) {
+            // Kui kasutaja on admin, tagasta kõik motivatsioonid
+            const allMotivations = await db.motivations.findAll();
+            console.log("Kõik motivatsioonid andmebaasist:", allMotivations);
 
-        const UserID = req.UserID;  // Kasutame authenticate middleware'is määratud userId-d
+            if (allMotivations.length === 0) {
+                return res.status(404).json({ message: 'Motivatsioone ei leitud' });
+            }
+
+            return res.status(200).json({ motivations: allMotivations });
+        }
+
+        // Kui kasutaja pole admin, tagasta ainult tema motivatsioonid
+        const UserID = req.UserID; // Kasutame authenticate middleware'is määratud userId-d
         if (!UserID) {
             console.error('Kasutaja ID on määramata');
             return res.status(400).json({ error: 'Kasutaja ID puudub' });
         }
 
-        // Leia ainult selle kasutaja motivatsioonid
-        const motivations = await db.motivations.findAll({
-            where: { UserID: req.UserID } // Filtreerime motivatsioonid kasutaja järgi
+        const userMotivations = await db.motivations.findAll({
+            where: { UserID: UserID }, // Filtreerime motivatsioonid kasutaja järgi
         });
-        console.log("Motivatsioonid andmebaasist:", motivations);
+        console.log("Kasutaja motivatsioonid andmebaasist:", userMotivations);
 
-        if (motivations.length === 0) {
+        if (userMotivations.length === 0) {
             return res.status(404).json({ message: 'Motivatsioone ei leitud' });
         }
 
-        // Tagasta motivatsioonide nimekiri
-        res.status(200).json({ motivations });
+        return res.status(200).json({ motivations: userMotivations });
     } catch (error) {
         console.error('Viga motivatsioonide andmete pärimisel:', error);
-        res.status(500).json({ error: 'Serveri viga' });
+        return res.status(500).json({ error: 'Serveri viga' });
     }
 }];
 
@@ -76,48 +84,49 @@ exports.getById = async (req, res) => {
 exports.editById = [authenticate, async (req, res) => {
     const motivation = await getMotivation(req, res);
     if (!motivation) { return; }
-    
-    // Kontrolli, kas kasutaja saab muuta ainult oma tsitaate
-    if (motivation.UserID !== req.UserID) {
+
+    // Kontrolli, kas kasutajal on luba seda tsitaati muuta
+    if (motivation.UserID !== req.UserID && !req.isAdmin) {
         return res.status(403).json({ error: "Sul pole luba seda tsitaati muuta." });
     }
-    
+
     const { Quote, Likes } = req.body;
     if (!Quote) {
         return res.status(400).json({ error: "Tsitaadi tekst on kohustuslik." });
     }
-    
+
+    // Uuenda tsitaadi andmeid
     motivation.Quote = Quote;
-    //motivation.Likes = Likes || motivation.Likes; // Jätame vanad Likes, kui uut väärtust pole
+    //motivation.Likes = Likes || motivation.Likes; // Kui Likes on vajalik, lisa see siin
     await motivation.save();
-    
+
     console.log("Uuendatud motivatsioon:", motivation);
-    
+
     return res.status(200).json(motivation); // Tagasta uuendatud tsitaat
 }];
     
 exports.deleteById = [authenticate, async (req, res) => {
     console.log('Päringu parameetrid:', req.params);
-    const idNumber = parseInt(req.params.id); // Kasutame "id" mitte "MotivationID"
+    const idNumber = parseInt(req.params.id);
     if (isNaN(idNumber)) {
-        res.status(400).send({ error: "Invalid motivation ID" });
-        return;
+        return res.status(400).send({ error: "Invalid motivation ID" });
     }
-    
+
     const motivation = await db.motivations.findByPk(idNumber);
     if (!motivation) {
-        res.status(404).send({ error: "Motivation not found" });
-        return;
+        return res.status(404).send({ error: "Motivation not found" });
     }
-    
-    // Kontrollige, kas kasutaja saab kustutada ainult oma tsitaate
-    if (motivation.UserID !== req.UserID) {
+
+    // Kontrollige, kas kasutajal on luba seda tsitaati kustutada
+    if (motivation.UserID !== req.UserID && !req.isAdmin) {
         return res.status(403).json({ error: "Sul pole luba seda tsitaati kustutada." });
     }
-    
+
     await motivation.destroy(); // Kustuta tsitaat
+    console.log("Kustutatud motivatsioon ID-ga:", idNumber);
+
     return res.status(204).send(); // Tagasta 204 ilma sisuta
-}];    
+}];
 
 const getMotivation = async (req, res) => {
     const idNumber = parseInt(req.params.id);
