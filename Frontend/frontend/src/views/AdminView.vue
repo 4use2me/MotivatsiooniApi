@@ -2,7 +2,14 @@
     <div>
       <h1>Administraatori vaade</h1>
       <button @click="logout">Logi välja</button>
-  
+        
+      <!-- Kasutajate kuvamine -->
+      <div>
+        <h3>Kõik kasutajad:</h3>
+        <!-- Kasutame UsersTable komponenti -->
+        <UsersTable :items="allUsers" />
+      </div>
+
       <!-- Motivatsiooni loomise osa -->
       <div>
         <button @click="toggleCreateMotivation">Loo motivatsioon</button>
@@ -36,6 +43,7 @@
   import AllMotivations from '../components/AllMotivations.vue'; // Importige komponent
   import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
   import UpdateMotivation from "../components/UpdateMotivation.vue";
+  import UsersTable from '../components/UsersTable.vue'
   
   export default {
     props: {
@@ -47,6 +55,7 @@
     data() {
       return {
         motivations: [], // Motivatsioonide loend
+        allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
         editingMotivation: null, // Hetkel redigeeritav motivatsioon
       };
@@ -56,6 +65,10 @@
       logout() {
         localStorage.removeItem('token'); // Eemalda token LocalStorage'ist
         this.$router.push("/"); // Suuna tagasi AuthView-le
+      },
+
+      async fetchUsers() {
+        this.allUsers = await (await fetch("http://localhost:8080/users")).json()
       },
   
       toggleCreateMotivation() {
@@ -144,11 +157,13 @@
     },
     mounted() {
       this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
+      this.fetchUsers(); 
     },
     components: {
       AllMotivations, // Registreerige AllMotivations komponent
       NewMotivation, // Registreerige NewMotivation komponent
       UpdateMotivation,
+      UsersTable,
     },
   };
   </script>
