@@ -2,7 +2,23 @@
     <div>
       <h1>Administraatori vaade</h1>
       <button @click="logout">Logi välja</button>
-        
+<hr>
+      <!-- Kasutaja kuvamine -->
+    <div v-if="userData">
+      <h3>Sinu andmed:</h3>
+      <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
+      <p><strong>Parool:</strong> {{ userData.Password }}</p>
+      <button @click="startEditingUser(userData)">Muuda</button>
+    </div>
+
+    <!-- Kasutaja muutmise vorm -->
+    <UpdateUser
+      v-if="editingUser"
+      :user="editingUser"
+      @userUpdated="onUserUpdated"
+      @cancelEdit="cancelEditingUser"
+    />
+<hr>
       <!-- Kasutajate kuvamine -->
       <div>
         <h3>Kõik kasutajad:</h3>
@@ -11,7 +27,7 @@
         @deleteUser="deleteUser"
         />
       </div>
-
+<hr>
       <!-- Motivatsiooni loomise osa -->
       <div>
         <button @click="toggleCreateMotivation">Loo motivatsioon</button>
@@ -46,6 +62,7 @@
   import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
   import UpdateMotivation from "../components/UpdateMotivation.vue";
   import UsersTable from '../components/UsersTable.vue'
+  import UpdateUser from "../components/UpdateUser.vue";
   
   export default {
     props: {
@@ -56,6 +73,8 @@
     },
     data() {
       return {
+        editingUser: null,
+        userData: null, // Siia salvestatakse kasutaja andmed
         motivations: [], // Motivatsioonide loend
         allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
@@ -68,6 +87,35 @@
         localStorage.removeItem('token'); // Eemalda token LocalStorage'ist
         this.$router.push("/"); // Suuna tagasi AuthView-le
       },
+
+      async fetchUserData() {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        console.error("Token puudub. Palun logi sisse.");
+        this.$router.push("/"); // Suuna tagasi sisselogimise vaatesse
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:8080/users/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          this.userData = await response.json(); // Salvesta kasutaja andmed
+          console.log("Sisseloginud kasutaja andmed:", this.userData);
+        } else {
+          console.error("Kasutaja andmete laadimine ebaõnnestus.");
+          this.$router.push("/"); // Suuna tagasi sisselogimise vaatesse
+        }
+      } catch (error) {
+        console.error("Ühendustõrge kasutaja andmete laadimisel:", error);
+      }
+    },
 
       async fetchUsers() {
         this.allUsers = await (await fetch("http://localhost:8080/users")).json()
@@ -181,6 +229,19 @@
           console.error("Viga motivatsiooni kustutamisel:", error);
         }
       },
+
+      startEditingUser(user) {
+      console.log("Redigeeritav kasutaja:", user);
+      this.editingUser = user; // Määra redigeeritav kasutaja
+      },
+      onUserUpdated() {
+        this.editingUser = null; // Lõpeta muutmine
+        this.fetchUserData(); // Uuenda 
+        this.fetchUsers();
+      },
+      cancelEditingUser() {
+        this.editingUser = null; // Katkesta muutmine
+      },
   
       startEditingMotivation(motivation) {
         console.log("Redigeeritav motivatsioon:", motivation);
@@ -197,12 +258,14 @@
     mounted() {
       this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
       this.fetchUsers(); 
+      this.fetchUserData(); // Laadi sisseloginud kasutaja andmed
     },
     components: {
       AllMotivations, // Registreerige AllMotivations komponent
       NewMotivation, // Registreerige NewMotivation komponent
       UpdateMotivation,
       UsersTable,
+      UpdateUser,
     },
   };
   </script>

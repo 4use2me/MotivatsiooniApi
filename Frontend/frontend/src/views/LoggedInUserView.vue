@@ -2,7 +2,23 @@
   <div>
     <h1>Tere tulemast, {{ username }}</h1>
     <button @click="logout">Logi välja</button>
+<hr>
+    <!-- Kasutaja kuvamine -->
+    <div v-if="userData">
+      <h3>Sinu andmed:</h3>
+      <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
+      <p><strong>Parool:</strong> {{ userData.Password }}</p>
+      <button @click="startEditingUser(userData)">Muuda</button>
+    </div>
 
+    <!-- Kasutaja muutmise vorm -->
+    <UpdateUser
+      v-if="editingUser"
+      :user="editingUser"
+      @userUpdated="onUserUpdated"
+      @cancelEdit="cancelEditingUser"
+    />
+<hr>
     <!-- Motivatsiooni loomise osa -->
     <div>
       <button @click="toggleCreateMotivation">Loo motivatsioon</button>
@@ -11,18 +27,17 @@
         <NewMotivation @motivationCreated="fetchMotivations" />
       </div>
     </div>
-
     <!-- Motivatsioonide kuvamine -->
     <div v-if="motivations.length">
       <h3>Sinu motivatsioonid:</h3>
-      <!-- Kasutame MotivationsTable komponenti -->
+      <!-- Kasutame UsersMotivations komponenti -->
       <UsersMotivations :items="motivations"
       @deleteMotivation="deleteMotivation"
       @editMotivation="startEditingMotivation"
       />
     </div>
 
-     <!-- Muutmise vorm -->
+     <!-- Motivatsiooni muutmise vorm -->
      <UpdateMotivation
       v-if="editingMotivation"
       :motivation="editingMotivation"
@@ -36,6 +51,7 @@
 import UsersMotivations from '../components/UsersMotivations.vue'; // Importige komponent
 import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
 import UpdateMotivation from "../components/UpdateMotivation.vue";
+import UpdateUser from "../components/UpdateUser.vue";
 
 export default {
   props: {
@@ -46,6 +62,8 @@ export default {
   },
   data() {
     return {
+      userData: null, // Siia salvestatakse kasutaja andmed
+      editingUser: null,
       motivations: [], // Motivatsioonide loend
       showMotivationForm: false, // Motiveerimisvormi näitamine
       editingMotivation: null, // Hetkel redigeeritav motivatsioon
@@ -61,6 +79,35 @@ export default {
     toggleCreateMotivation() {
       this.showMotivationForm = !this.showMotivationForm; // Näita või peida vormi
     },
+
+    async fetchUserData() {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      console.error("Token puudub. Palun logi sisse.");
+      this.$router.push("/"); // Suuna tagasi sisselogimise vaatesse
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/users/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        this.userData = await response.json(); // Salvesta kasutaja andmed
+        console.log("Sisseloginud kasutaja andmed:", this.userData);
+      } else {
+        console.error("Kasutaja andmete laadimine ebaõnnestus.");
+        this.$router.push("/"); // Suuna tagasi sisselogimise vaatesse
+      }
+    } catch (error) {
+      console.error("Ühendustõrge kasutaja andmete laadimisel:", error);
+    }
+  },
 
     async fetchMotivations() {
       const token = localStorage.getItem("token"); // Tokeni saamine localStorage'st
@@ -130,6 +177,18 @@ export default {
       }
     },
 
+    startEditingUser(user) {
+      console.log("Redigeeritav kasutaja:", user);
+      this.editingUser = user; // Määra redigeeritav kasutaja
+    },
+    onUserUpdated() {
+      this.editingUser = null; // Lõpeta muutmine
+      this.fetchUserData(); // Uuenda 
+    },
+    cancelEditingUser() {
+      this.editingUser = null; // Katkesta muutmine
+    },
+
     startEditingMotivation(motivation) {
       console.log("Redigeeritav motivatsioon:", motivation);
       this.editingMotivation = motivation; // Määra hetkel redigeeritav motivatsioon
@@ -143,12 +202,14 @@ export default {
     },
   },
   mounted() {
+    this.fetchUserData(); // Laadi sisseloginud kasutaja andmed
     this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
   },
   components: {
     UsersMotivations, // Registreerige UsersMotivations komponent
     NewMotivation, // Registreerige NewMotivation komponent
     UpdateMotivation,
+    UpdateUser, // Registreerige UpdateUser komponent
   },
 };
 </script>

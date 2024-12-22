@@ -1,12 +1,34 @@
 const {db} =require("../db");
 const Utils = require("./utils");
 const jwt = require('jsonwebtoken');
+const authenticate = require('../controllers/authMiddleware');
 
 exports.getAll = async (req, res) => {
     const users = await db.users.findAll();
     console.log('Leitud kasutajad:', users);
     res.send (users.map(({UserID, UserName, Password}) => {return {UserID, UserName, Password}}))
 }
+
+exports.getMe = [authenticate, async (req, res) => {
+    try {
+        const user = await db.users.findByPk(req.UserID);
+
+        if (!user) {
+            return res.status(404).json({ error: "Kasutaja andmeid ei leitud." });
+        }
+
+        // Tagasta kasutaja andmed koos parooliga
+        res.json({
+            UserID: user.UserID,
+            UserName: user.UserName,
+            Password: user.Password, // Tagasta ka parool
+        });
+    } catch (error) {
+        console.error("Viga kasutaja andmete toomisel:", error);
+        res.status(500).json({ error: "Serveri viga." });
+    }
+}];
+
 exports.getById = async (req, res) => {
     const user = await getUser(req, res);
     if (!user) { return};
@@ -17,7 +39,7 @@ exports.create = async (req, res) => {
     const { UserName, Password } = req.body;
   
     if (!UserName || !Password) {
-      return res.status(400).json({ error: "One or multiple parameters are missing" });
+      return res.status(400).json({ error: "Kasutajanimi või parool puudub." });
     }
   
     try {
@@ -76,21 +98,28 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.editById = async (req, res) => {
+exports.editById = [authenticate, async (req, res) => {
     const user = await getUser(req, res);
     if (!user) { return};
-    if (!req.body.UserName ||
-        !req.body.Password)
-    {
-        return res.status(400).send({ error: "One or multiple parameters are missing" }); // Kontrolli väljade olemasolu
+
+    // Kontrolli, kas kasutajal on luba andmeid muuta
+    if (user.UserID !== req.UserID && !req.isAdmin) {
+        return res.status(403).json({ error: "Sul pole luba andmeid muuta." });
     }
+
+    const { UserName, Password } = req.body;
+    if (!UserName || !Password) {
+        return res.status(400).json({ error: "One or multiple parameters are missing" });
+    }
+
     user.UserName = req.body.UserName
     user.Password = req.body.Password
     await user.save();
+    console.log("Uuendatud andmed", user);
     return res.status(200) // Tagasta 200 OK
         .location(`${Utils.getBaseURL(req)}/users/${user.UserID}`)
         .send(user);
-}
+}];
 
 exports.deleteById = async (req, res) => {
     try {
