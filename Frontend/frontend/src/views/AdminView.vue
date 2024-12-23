@@ -23,7 +23,7 @@
       <input 
         type="text" 
         v-model="userSearchQuery" 
-        placeholder="Otsi kasutajat nime järgi" 
+        placeholder="Otsi kasutajat nime või id järgi" 
       />
       <!-- Kasutajate kuvamine -->
       <div>
@@ -47,7 +47,7 @@
       <input 
         type=integer
         v-model="motivationsSearchQuery" 
-        placeholder="Otsi tsitaati kasutaja id järgi" 
+        placeholder="Otsi motivatsiooni tsitaadi või kasutaja id järgi" 
       />
   
       <!-- Motivatsioonide kuvamine -->
@@ -105,15 +105,19 @@
       // Filtreeritud kasutajad
       filteredUsers() {
         const query = this.userSearchQuery.toLowerCase();
-        return this.allUsers.filter(user => 
-          user.UserName.toLowerCase().includes(query)
+        return this.allUsers.filter(user => {
+          return user.UserName.toLowerCase().includes(query) || 
+           user.UserID.toString().includes(query);
+          }
         );
       },
       // Filtreeritud motivatsioonid
       filteredMotivations() {
-        const query = this.motivationsSearchQuery;
-        const filtered = this.motivations.filter((motivation) =>
-          motivation.UserID.toString().includes(query)
+        const query = this.motivationsSearchQuery.toLowerCase();
+        const filtered = this.motivations.filter((motivation) => {
+          return motivation.Quote.toLowerCase().includes(query) || 
+          motivation.UserID.toString().includes(query);
+          }
         );
 
         // Sorteerime Likes väärtuse järgi
