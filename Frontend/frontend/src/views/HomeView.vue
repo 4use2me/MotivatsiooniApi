@@ -1,15 +1,25 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
+<script>
+import RandomMotivation from '../components/RandomMotivation.vue';
+
+export default {
+  components: {RandomMotivation},
+  data() {return {
+    RandomMotivation,
+  }},
+}
 </script>
 
 <template>
-   <main>
+  <header>
     <div>
       <nav>
         <RouterLink to="/auth">Registreeri/Logi sisse</RouterLink>
       </nav>
     </div>
-  </main>
-
-  <RouterView />
+  </header>
+  <body>
+    <RandomMotivation />
+  </body>
+  
 </template>
+

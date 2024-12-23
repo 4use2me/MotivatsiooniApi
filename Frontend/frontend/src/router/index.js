@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AuthView from "@/views/AuthView.vue"; // AuthView tuleb views kaustast
 import LoggedInUserView from "@/views/LoggedInUserView.vue";
 import AdminView from "@/views/AdminView.vue";
+import RandomMotivation from '../components/RandomMotivation.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,11 @@ const router = createRouter({
       name: "LoggedInUserView",
       component: LoggedInUserView,
       props: true, // Edasta parameeter propsina
+    },
+    {
+      path: '/random',
+      name: 'random',
+      component: RandomMotivation,
     },
   ],
 })

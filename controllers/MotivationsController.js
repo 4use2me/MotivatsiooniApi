@@ -2,6 +2,41 @@ const {db} =require("../db");
 const Utils = require("./utils");
 const authenticate = require('../controllers/authMiddleware');
 
+exports.getRandom = async (req, res) => {
+    console.log("getRandom method called"); // Kontroll, kas meetod käivitub
+    try {
+        console.log("Fetching random motivation...");
+
+        const randomMotivation = await db.motivations.findOne({
+            order: db.sequelize.random(), // Randomly fetch one record
+        });
+
+        console.log("Random motivation fetched:", randomMotivation);
+
+        // Handle the case where no quotes exist
+        if (!randomMotivation) {
+            console.error("No motivation found in the database.");
+            return res.status(404).send({ error: "No quotes available" });
+        }
+
+        // Kontrolli, kas MotivationID eksisteerib ja on korrektne
+        if (!randomMotivation.MotivationID) {
+            console.error("Invalid motivation ID in result:", randomMotivation);
+            return res.status(400).send({ error: "Invalid motivation id." });
+        }
+        // Return the random quote
+        return res.send({
+            MotivationID: randomMotivation.MotivationID,
+            Quote: randomMotivation.Quote,
+            UserID: randomMotivation.UserID,
+            Likes: randomMotivation.Likes,
+        });
+    } catch (error) {
+        console.error("Error fetching random quote:", error);
+        return res.status(500).send({ error: "An error occurred while fetching a random quote" });
+    }
+};
+
 exports.getAll = async (req, res) => {
     const motivations = await db.motivations.findAll();
     res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))

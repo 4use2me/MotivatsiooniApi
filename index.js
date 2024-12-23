@@ -14,6 +14,11 @@ app.use(cors());
 app.use("/docs", swaggerUI.serve,swaggerUI.setup(swaggerDoc));
 app.use(express.json());
 
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+});
+
 app.get("/", (req, res) => {
     res.send(`Server running. Documentation at <a href="http://${host}:${port}/docs">/docs</a>`);
 })
