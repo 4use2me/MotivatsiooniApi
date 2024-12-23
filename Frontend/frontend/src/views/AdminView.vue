@@ -19,11 +19,17 @@
       @cancelEdit="cancelEditingUser"
     />
 <hr>
+      <!-- Filtreerimise sisend -->
+      <input 
+        type="text" 
+        v-model="userSearchQuery" 
+        placeholder="Otsi kasutajat nime järgi" 
+      />
       <!-- Kasutajate kuvamine -->
       <div>
         <h3>Kõik kasutajad:</h3>
         <!-- Kasutame UsersTable komponenti -->
-        <UsersTable :items="allUsers" 
+        <UsersTable :items="filteredUsers" 
         @deleteUser="deleteUser"
         />
       </div>
@@ -36,12 +42,19 @@
           <NewMotivation @motivationCreated="fetchMotivations" />
         </div>
       </div>
+<hr>
+      <!-- Filtreerimise sisend -->
+      <input 
+        type=integer
+        v-model="motivationsSearchQuery" 
+        placeholder="Otsi tsitaati kasutaja id järgi" 
+      />
   
       <!-- Motivatsioonide kuvamine -->
       <div v-if="motivations.length">
         <h3>Kõik motivatsioonid:</h3>
         <!-- Kasutame AllMotivations komponenti -->
-        <AllMotivations :items="motivations"
+        <AllMotivations :items="filteredMotivations"
         @deleteMotivation="deleteMotivation"
         @editMotivation="startEditingMotivation"
         />
@@ -75,11 +88,30 @@
       return {
         editingUser: null,
         userData: null, // Siia salvestatakse kasutaja andmed
+        userSearchQuery: '',
+        motivationsSearchQuery: '',
         motivations: [], // Motivatsioonide loend
         allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
         editingMotivation: null, // Hetkel redigeeritav motivatsioon
       };
+    },
+
+    computed: {
+      // Filtreeritud kasutajad
+      filteredUsers() {
+        const query = this.userSearchQuery.toLowerCase();
+        return this.allUsers.filter(user => 
+          user.UserName.toLowerCase().includes(query)
+        );
+      },
+      // Filtreeritud motivatsioonid
+      filteredMotivations() {
+        const query = this.motivationsSearchQuery;
+        return this.motivations.filter(motivation => 
+          motivation.UserID.toString().includes(query)
+        );
+      },
     },
   
     methods: {
@@ -117,9 +149,14 @@
       }
     },
 
-      async fetchUsers() {
-        this.allUsers = await (await fetch("http://localhost:8080/users")).json()
-      },
+    async fetchUsers() {
+      try {
+        const response = await fetch("http://localhost:8080/users");
+        this.allUsers = await response.json();
+      } catch (error) {
+        console.error("Kasutajate laadimine ebaõnnestus:", error);
+      }
+    },
 
       // Kasutaja kustutamine
       async deleteUser(userID) {
