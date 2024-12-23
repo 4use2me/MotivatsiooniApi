@@ -54,7 +54,10 @@
       <div v-if="motivations.length">
         <h3>Kõik motivatsioonid:</h3>
         <!-- Kasutame AllMotivations komponenti -->
-        <AllMotivations :items="filteredMotivations"
+        <AllMotivations 
+        :items="filteredMotivations"
+        :sortDirection="sortDirection"
+        @toggleSort="toggleSort"
         @deleteMotivation="deleteMotivation"
         @editMotivation="startEditingMotivation"
         />
@@ -90,6 +93,7 @@
         userData: null, // Siia salvestatakse kasutaja andmed
         userSearchQuery: '',
         motivationsSearchQuery: '',
+        sortDirection: "asc",
         motivations: [], // Motivatsioonide loend
         allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
@@ -108,8 +112,15 @@
       // Filtreeritud motivatsioonid
       filteredMotivations() {
         const query = this.motivationsSearchQuery;
-        return this.motivations.filter(motivation => 
+        const filtered = this.motivations.filter((motivation) =>
           motivation.UserID.toString().includes(query)
+        );
+
+        // Sorteerime Likes väärtuse järgi
+        return filtered.sort((a, b) =>
+          this.sortDirection === "asc"
+            ? a.Likes - b.Likes
+            : b.Likes - a.Likes
         );
       },
     },
@@ -203,7 +214,9 @@
         const token = localStorage.getItem("token"); // Tokeni saamine localStorage'st
         console.log("Token:", token);
         try {
-          const response = await fetch("http://localhost:8080/motivations/user", {
+          const response = await fetch(
+            `http://localhost:8080/motivations/user?sort=${this.sortDirection}`, // Lisa sortimissuuna parameeter
+            {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -221,6 +234,10 @@
         } catch (error) {
           console.error("Ühendustõrge", error); // Ühenduse viga
         }
+      },
+      toggleSort() {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+        this.fetchMotivations(); // Laeme uuesti andmed sorteeritud kujul
       },
   
       async deleteMotivation(MotivationID) {

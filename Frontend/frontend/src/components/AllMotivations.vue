@@ -3,7 +3,15 @@
         <thead class="table-dark">
         <tr>
           <th>Tsitaadid</th>
-          <th>Meeldimised</th>
+          <th>
+          Meeldimised
+          <span class="sort-arrows" @click="$emit('toggleSort')">
+            <i 
+              class="arrow" 
+              :class="sortDirection === 'asc' ? 'asc' : 'desc'">
+            </i>
+          </span>
+        </th>
           <th>Kasutaja ID</th>
           <th>Tegevused</th>
         </tr>
@@ -29,7 +37,33 @@
         type: Array,
         required: true,
       },
+      sortDirection: {
+        type: String,
+        required: true,
+      },
     },
   };
   </script>
+
+<style scoped>
+/* Sorteerimisnoolte stiil */
+.sort-arrows {
+  margin-left: 8px;
+  cursor: pointer;
+  display: inline-block;
+}
+.arrow {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+.arrow.asc {
+  border-bottom: 6px solid #ffffff; /* Ülesnool */
+}
+.arrow.desc {
+  border-top: 6px solid #ffffff; /* Allanoole */
+}
+</style>
   

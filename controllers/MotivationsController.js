@@ -2,9 +2,23 @@ const {db} =require("../db");
 const Utils = require("./utils");
 const authenticate = require('../controllers/authMiddleware');
   
+// exports.getAll = async (req, res) => {
+//     const motivations = await db.motivations.findAll();
+//     res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
+// };
+
 exports.getAll = async (req, res) => {
-    const motivations = await db.motivations.findAll();
-    res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
+    try {
+        const sort = req.query.sort || "asc"; // Võta sorteerimissuund päringust (vaikimisi kasvavalt)
+        const motivations = await db.motivations.findAll({
+            order: [["Likes", sort]], // Sorteerime meeldimiste arvu järgi
+        });
+
+        res.json(motivations);
+    } catch (error) {
+        console.error("Viga motivatsioonide laadimisel:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };
 
 exports.getRandom = async (req, res) => {
