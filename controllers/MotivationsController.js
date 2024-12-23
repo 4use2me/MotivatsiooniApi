@@ -1,6 +1,11 @@
 const {db} =require("../db");
 const Utils = require("./utils");
 const authenticate = require('../controllers/authMiddleware');
+  
+exports.getAll = async (req, res) => {
+    const motivations = await db.motivations.findAll();
+    res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
+};
 
 exports.getRandom = async (req, res) => {
     console.log("getRandom method called"); // Kontroll, kas meetod käivitub
@@ -37,10 +42,29 @@ exports.getRandom = async (req, res) => {
     }
 };
 
-exports.getAll = async (req, res) => {
-    const motivations = await db.motivations.findAll();
-    res.send (motivations.map(({MotivationID, Quote, Likes, UserID}) => {return {MotivationID, Quote, Likes, UserID}}))
-}
+exports.likeMotivation = async (req, res) => {
+    try {
+        // Otsime andmebaasist tsitaadi ID põhjal
+        const idNumber = parseInt(req.params.id);
+        const motivation = await db.motivations.findByPk(idNumber); 
+
+        if (!motivation) {
+            return res.status(404).json({ error: "Motivation not found" });
+        }
+
+        // Suurendame meeldimiste arvu
+        motivation.Likes += 1;
+
+        // Salvestame muudatused andmebaasi
+        await motivation.save();
+
+        // Tagastame uuendatud meeldimiste arvu
+        res.json({ likes: motivation.Likes });
+    } catch (error) {
+        console.error("Serveri viga:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 exports.getUsersMotivations = [authenticate, async (req, res) => {
     try {

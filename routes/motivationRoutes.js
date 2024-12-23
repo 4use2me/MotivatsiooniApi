@@ -7,6 +7,8 @@ module.exports = (app) => {
       .post(MotivationsController.create)
    app.route("/motivations/random")
       .get(MotivationsController.getRandom)
+   app.route("/motivations/:id/like")
+      .post(MotivationsController.likeMotivation);
    app.route('/motivations/user') // Motivatsioonid, mis kuuluvad sisseloginud kasutajale
       .get(authenticate, MotivationsController.getUsersMotivations);
    app.route("/motivations/:id")
