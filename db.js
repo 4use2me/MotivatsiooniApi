@@ -17,11 +17,11 @@ const sequelize = new Sequelize(process.env.DB_DATANAME, process.env.DB_USERNAME
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.motivations = require("./models/motivation")(sequelize, DataTypes);
-db.users = require("./models/user")(sequelize, DataTypes);
+db.motivations = require("./models/Motivation")(sequelize, DataTypes);
+db.users = require("./models/User")(sequelize, DataTypes);
 
 const sync = (async () => {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false});
     console.log("models have been synchronized successfully.")
     });
 

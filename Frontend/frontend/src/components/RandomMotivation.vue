@@ -2,24 +2,58 @@
 export default {
   data() {
     return {
-      randomQuote: null, // To store the random quote
+      randomMotivation: null, // Hoidla juhuslikule tsitaadile
+      isLiked: false, // Kas tsitaat on meeldivaks märgitud
     };
   },
   async created() {
-    await this.fetchRandomQuote(); // Fetch a random quote when the page loads
+    // Lae juhuslik tsitaat lehe laadimisel
+    await this.fetchRandomMotivation();
   },
   methods: {
-    // Fetches a random quote from the server
-    async fetchRandomQuote() {
+    // Laadib juhusliku tsitaadi serverist
+    async fetchRandomMotivation() {
       try {
         const response = await fetch("http://localhost:8080/motivations/random");
-        if (!response.ok) throw new Error("Failed to fetch quote");
+        if (!response.ok) throw new Error("Tsitaadi laadimine ebaõnnestus");
 
         const data = await response.json();
-        this.randomQuote = data; // Update the randomQuote property
+        console.log("Laetud tsitaat:", data);
+        this.randomMotivation = data;
+        this.isLiked = false; // Resetime meeldivaks märkimise staatuse
       } catch (error) {
-        console.error("Error fetching random quote:", error);
-        this.randomQuote = { Quote: "Unable to fetch a quote at this time." };
+        console.error("Viga tsitaadi laadimisel:", error);
+        this.randomMotivation = { Quote: "Praegu ei õnnestunud tsitaati laadida.", Likes: 1 };
+        this.isLiked = false;
+      }
+    },
+
+    // Lülitab meeldivaks märkimise staatuse ja uuendab serverit
+    async toggleLike() {
+      if (!this.randomMotivation || !this.randomMotivation.MotivationID) {
+        console.error("Puudub tsitaat või selle ID");
+        return;
+      }
+      console.log("RandomMotivation ID:", this.randomMotivation?.MotivationID);
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/motivations/${this.randomMotivation.MotivationID}/like`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Meeldivaks märkimine ebaõnnestus");
+
+        const { likes } = await response.json();
+        this.randomMotivation.Likes = likes; // Uuenda lokaalselt meeldimiste arvu
+        this.isLiked = true; // Näita, et tsitaat on meeldivaks märgitud
+      } catch (error) {
+        console.error("Viga meeldivaks märkimisel:", error);
       }
     },
   },
@@ -29,16 +63,24 @@ export default {
 <template>
 
     <!-- Random Quote Display -->
-    <div v-if="randomQuote" class="quote-container">
+    <div v-if="randomMotivation" class="quote-container">
       <blockquote>
-        "{{ randomQuote.Quote }}"
+        "{{ randomMotivation.Quote }}"
       </blockquote>
-      <p>Likes: {{ randomQuote.Likes }}</p>
+      <div class="like-container">
+        <span 
+            :class="['heart-icon', { liked: isLiked }]" 
+            @click="toggleLike"
+        >
+            <i class="fas fa-heart"></i>
+        </span>
+      <p>Likes: {{ randomMotivation.Likes }}</p>
     </div>
+  </div>
 
     <!-- Button to Fetch New Random Quote -->
      <div class="refresh">
-        <button @click="fetchRandomQuote" class="refresh-button">
+        <button @click="fetchRandomMotivation" class="refresh-button">
             Näita veel!
         </button>
     </div>
@@ -53,7 +95,22 @@ blockquote{
   font-size: 1.5em;
   margin: 20px 0;
   padding: 10px;
-  color: #f9f9f9;
+  color: #6a21b3;
+}
+.like-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.heart-icon {
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s ease;
+}
+.heart-icon.liked {
+  color: red;
 }
 .refresh{
     display: flex;
@@ -72,9 +129,5 @@ blockquote{
 
 .refresh-button:hover {
   background-color: #369870;
-}
-
-.userView {
-  margin-top: 20px;
 }
 </style>

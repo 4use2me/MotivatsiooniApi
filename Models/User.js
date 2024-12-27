@@ -2,18 +2,11 @@ module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(
         "User",
         {
-            ID: {
+            UserID: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-            },
-            MotivationID: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
-            Date: {
-                type: DataTypes.DATEONLY,
-                allowNull: false,
+                field: "UserID",
             },
             UserName: {
                 type: DataTypes.STRING,
@@ -21,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
             },
             Password: {
                 type: DataTypes.STRING,
-            }
+            },
         }
     );
-
+  
     console.log(User === sequelize.models.User);
     return User;
-}
+  };

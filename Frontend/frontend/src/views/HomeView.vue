@@ -1,22 +1,24 @@
 <script>
-import MotivationsTable from '../components/MotivationsTable.vue'
-import UsersTable from '../components/UsersTable.vue'
 import RandomMotivation from '../components/RandomMotivation.vue';
+
 export default {
-  components: {MotivationsTable, UsersTable, RandomMotivation},
+  components: {RandomMotivation},
   data() {return {
-    allMotivations: [],
-    allUsers: [],
     RandomMotivation,
   }},
-  async created() {
-    this.allMotivations = await (await fetch("http://localhost:8080/motivations")).json()
-    this.allUsers = await (await fetch("http://localhost:8080/users")).json()
-  }
 }
 </script>
 
 <template>
-    <RandomMotivation />    
+  <header>
+    <div>
+      <nav>
+        <RouterLink to="/auth">Registreeri/Logi sisse</RouterLink>
+      </nav>
+    </div>
+  </header>
+  <body>
+    <RandomMotivation />
+  </body>
+  
 </template>
-

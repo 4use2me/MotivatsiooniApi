@@ -1,7 +1,6 @@
-
 <script>
 export default {
-    name: "UsersTable",
+    name: "LoggedInUser",
     props: {
         items: Array  
     }
@@ -12,19 +11,26 @@ export default {
     <table class="table table-striped">
         <thead class="table-dark">
             <tr>
-                <th>Kasutaja ID</th>
                 <th>Kasutajanimi</th>
-                <th>Tegevused</th>
+            </tr>
+            <tr>
+                <th>Parool</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="item in items" :key="item.UserID">
-                <td>{{item.UserID}}</td>
                 <td>{{item.UserName}}</td>
                 <td>
-                    <button @click="$emit('deleteUser', item.UserID)">Kustuta</button>
+                    <button @click="$emit('editUser', item)">Muuda</button>
                 </td>
             </tr>
+            <tr v-for="item in items" :key="item.UserID">
+                <td>{{item.Password}}</td>
+                <td>
+                    <button @click="$emit('editUser', item)">Muuda</button>
+                </td>
+            </tr>
+
         </tbody>
     </table>
 </template>

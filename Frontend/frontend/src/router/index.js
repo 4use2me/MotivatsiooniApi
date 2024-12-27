@@ -1,6 +1,9 @@
+
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import UserView from '@/views/UserView.vue'
+import AuthView from "@/views/AuthView.vue"; // AuthView tuleb views kaustast
+import LoggedInUserView from "@/views/LoggedInUserView.vue";
+import AdminView from "@/views/AdminView.vue";
 import RandomMotivation from '../components/RandomMotivation.vue';
 
 const router = createRouter({
@@ -20,9 +23,20 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
-      path: '/user',
-      name: 'user',
-      component: UserView,
+      path: "/auth",
+      name: "AuthView",
+      component: AuthView,
+    },
+    {
+      path: "/admin",
+      name: "AdminView",
+      component: AdminView,
+    },
+    {
+      path: "/loggedin/:username",
+      name: "LoggedInUserView",
+      component: LoggedInUserView,
+      props: true, // Edasta parameeter propsina
     },
     {
       path: '/random',

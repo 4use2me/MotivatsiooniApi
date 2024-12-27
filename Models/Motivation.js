@@ -1,24 +1,22 @@
+
 module.exports = (sequelize, DataTypes) => {
     const Motivation = sequelize.define(
         "Motivation",
         {
-            ID: {
+            MotivationID: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
+                field: "MotivationID",
             },
             Quote: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            Date: {
-                type: DataTypes.DATEONLY,
-                allowNull: false,
-            },
-            UserID: {
+            Likes: {
                 type: DataTypes.INTEGER,
             },
-            Likes: {
+            UserID: {
                 type: DataTypes.INTEGER,
             }
         }

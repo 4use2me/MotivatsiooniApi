@@ -4,11 +4,17 @@ import HeaderView from './components/Header.vue';
 </script>
 
 <template>
+  <header>
+    <div>
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
   <HeaderView />
   <RouterView />
 </template>
-
-
 
 <style scoped>
 
