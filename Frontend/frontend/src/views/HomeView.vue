@@ -10,15 +10,7 @@ export default {
 </script>
 
 <template>
-  <header>
-    <div>
-      <nav>
-        <RouterLink to="/auth">Registreeri/Logi sisse</RouterLink>
-      </nav>
-    </div>
-  </header>
   <body>
     <RandomMotivation />
-  </body>
-  
+  </body> 
 </template>

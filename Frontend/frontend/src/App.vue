@@ -7,17 +7,16 @@ import HeaderView from './components/Header.vue';
   <header>
     <div>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/">Motiveeri ennast!</RouterLink>
+        <RouterLink to="/about">Meist</RouterLink>
+        <RouterLink class="login-nav" to="/auth">Registreeri/Logi sisse</RouterLink>
       </nav>
     </div>
   </header>
-  <HeaderView />
   <RouterView />
 </template>
 
 <style scoped>
-
 
 
 nav a.router-link-exact-active {

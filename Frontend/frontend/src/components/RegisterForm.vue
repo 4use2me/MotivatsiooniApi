@@ -1,13 +1,11 @@
 <template>
     <div>
       <form @submit.prevent="handleRegister">
-        <div>
-          <label>Kasutajanimi:</label>
-          <input type="text" v-model="username" required />
+        <div class="inputbox">
+          <input type="text" placeholder="Kasutajanimi" v-model="username" required />
         </div>
         <div>
-          <label>Parool:</label>
-          <input type="password" v-model="password" required />
+          <input type="password" placeholder="Parool" v-model="password" required />
         </div>
         <button type="submit">Registreeri</button>
       </form>
@@ -49,4 +47,41 @@
     },
   };
   </script>
+
+<style scoped>
+    button {
+      background-color: #3f7d20;
+      color:white;
+      border: none;
+      font-size: 12px;
+      font-weight: 300;
+      box-sizing: content-box;
+      padding:10px;
+      border-radius: 10px;
+      width: 60px;
+      position: absolute;
+      right:30px;
+      bottom: 30px;
+      cursor: pointer;
+    }
+
+    .login, .signup{
+  padding: 20px;
+  text-align: center;
+}
+
+.inputbox{
+  margin-top:30px; 
+}
+input {
+  display: block;
+  width: 100%;
+  height: 40px;
+  background-color: #f2f2f2;
+  border: none;
+  margin-bottom:20px;
+  padding-left: 10px;
+  font-size: 12px;
+}
+  </style>
   
