@@ -74,34 +74,46 @@ export default {
         >
             <i class="fas fa-heart"></i>
         </span>
-      <p>Likes: {{ randomMotivation.Likes }}</p>
+      <p id="likes-count">{{ randomMotivation.Likes }}</p>
+    </div>
+    <!-- Button to Fetch New Random Quote -->
+    <div class="refresh">
+        <button @click="fetchRandomMotivation" class="refresh-button">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
     </div>
   </div>
 
-    <!-- Button to Fetch New Random Quote -->
-     <div class="refresh">
-        <button @click="fetchRandomMotivation" class="refresh-button">
-            Näita veel!
-        </button>
-    </div>
 </template>
+
 
 <style scoped>
 blockquote{
     font-size: xx-large;
+    margin-bottom: 42px;
 }
+
 .quote-container {
-   text-align: center;
+  background-color: #18310c;
+  box-shadow: 2px 2px 5px #18310c;
+  text-align: center;
   font-size: 1.5em;
   margin: 20px 0;
   padding: 10px;
-  color: #6a21b3;
+  color: #d4b6d1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%; 
 }
+
 .like-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  bottom: 0px;
+  right: 16px;
+  position: absolute;
+  gap: 2px;
 }
 .heart-icon {
   font-size: 1.5em;
@@ -110,24 +122,30 @@ blockquote{
   transition: color 0.3s ease;
 }
 .heart-icon.liked {
-  color: red;
+  color: #fb4b4e;
 }
 .refresh{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .refresh-button {
-  background-color: #42b983;
+  background-color: #3f7d20;
   color: white;
-  padding: 10px 15px;
+  padding: 6px 16px;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 1em;
-  margin-bottom: 20px;
+
 }
 
 .refresh-button:hover {
-  background-color: #369870;
+  background-color: #316119;
+}
+
+#likes-count {
+  margin-top: 22px;
+  margin-bottom: 0;
 }
 </style>
