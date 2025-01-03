@@ -17,41 +17,42 @@
     </div>
   </div>
 
-  <div class="frontbox" :class="{ moving: showSignup }">
-    <div class="login" v-show="!showSignup">
-      <h2>Logi sisse</h2>
-      <LoginForm @loginSuccess="handleLoginSuccess" />
-    </div>
-    <div class="signup" v-show="showSignup">
-      <h2>Registreeru</h2>
-      <RegisterForm />
+    <div class="frontbox" :class="{ moving: showSignup }">
+      <div class="login" v-show="!showSignup">
+        <h2>Logi sisse</h2>
+        <LoginForm @loginSuccess="handleLoginSuccess" />
+      </div>
+      <div class="signup" v-show="showSignup">
+        <h2>Registreeru</h2>
+        <RegisterForm />
+      </div>
     </div>
   </div>
-</div>
+    
+  </template>
   
-</template>
+  <script>
+  import LoginForm from "@/components/LoginForm.vue";
+  import RegisterForm from "@/components/RegisterForm.vue";
 
-<script>
-import LoginForm from "@/components/LoginForm.vue";
-import RegisterForm from "@/components/RegisterForm.vue";
 
-export default {
-  name: "AuthView",
-  components: {
-    LoginForm,
-    RegisterForm,
+  export default {
+    name: "AuthView",
+    components: {
+      LoginForm,
+      RegisterForm,
+    },
+  data() {
+    return {
+      showSignup: false, // Determines which view to display
+    };
   },
-data() {
-  return {
-    showSignup: false, // Determines which view to display
-  };
-},
-methods: {
-  toggleView() {
-    this.showSignup = !this.showSignup;
-  },
-  async handleLoginSuccess({ token, UserName }) {
-    localStorage.setItem("token", token);
+  methods: {
+    toggleView() {
+      this.showSignup = !this.showSignup;
+    },
+    async handleLoginSuccess({ token, UserName }) {
+      localStorage.setItem("token", token);
     // Kontrolli, kas kasutajanimi on "admin"
     if (UserName === "admin") {
       this.$router.push("/admin"); // Admini vaade
@@ -61,18 +62,18 @@ methods: {
   },
 },
 };
-</script>
-
-<style scoped>
-.auth-container {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 650px;
-height: 400px;
-display: inline-flex;
-font-family: 'Roboto', sans-serif;
+  </script>
+  
+  <style scoped>
+  .auth-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 650px;
+  height: 400px;
+  display: inline-flex;
+  font-family: 'Roboto', sans-serif;
 }
 
 .backbox {

@@ -1,6 +1,18 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
+import { computed } from "vue";
+import { useAuth } from "@/composables/useAuth";
+import { RouterLink, RouterView, useRouter } from "vue-router";
 
+const { isAuthenticated, logout } = useAuth();
+const router = useRouter();
+
+// Use computed to ensure reactivity
+const isAuthenticatedState = computed(() => isAuthenticated.value);
+
+const handleLogout = () => {
+  logout();
+  router.push("/"); // Redirect to home after logout
+};
 </script>
 
 <template>
@@ -9,7 +21,13 @@ import { RouterLink, RouterView } from 'vue-router';
       <nav>
         <RouterLink to="/">Motiveeri ennast!</RouterLink>
         <RouterLink to="/about">Meist</RouterLink>
-        <RouterLink class="login-nav" to="/auth"><i class="fa-solid fa-user-plus"></i></RouterLink>
+        <!-- <RouterLink class="login-nav" to="/auth"><i class="fa-solid fa-user-plus"></i></RouterLink> -->
+        <RouterLink v-if="!isAuthenticatedState" class="login-nav" to="/auth">
+          <i class="fa-solid fa-user-plus"></i>
+        </RouterLink>
+        <button v-else class="logout-nav" @click="handleLogout">
+          Logout
+        </button>
       </nav>
     </div>
   </header>
