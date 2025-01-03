@@ -1,8 +1,11 @@
 
 <template>
     <div>
-      <h1>Tere tulemast, {{ username }}</h1>
-      <button @click="logout">Logi välja</button>
+      <div class="welcome">
+        <h1>Tere tulemast, {{ username }}</h1>
+        <button class="log-out" @click="logout">Logi välja</button>
+      </div>
+      
   <hr>
       <!-- Kasutaja kuvamine -->
       <div v-if="userData">
@@ -214,4 +217,13 @@
     },
   };
   </script>
+
+  <style scoped>
+    .welcome{
+      overflow: hidden;
+    }
+    .log-out{
+      float: right;
+    }
+  </style>
   

@@ -36,6 +36,7 @@
   import LoginForm from "@/components/LoginForm.vue";
   import RegisterForm from "@/components/RegisterForm.vue";
 
+
   export default {
     name: "AuthView",
     components: {
@@ -53,15 +54,15 @@
     },
     async handleLoginSuccess({ token, UserName }) {
       localStorage.setItem("token", token);
-      // Kontrolli, kas kasutajanimi on "admin"
-      if (UserName === "admin") {
-        this.$router.push("/admin"); // Admini vaade
-      } else {
-        this.$router.push("/user"); // Tavakasutaja vaade
-      }
-    },
+    // Kontrolli, kas kasutajanimi on "admin"
+    if (UserName === "admin") {
+      this.$router.push("/admin"); // Admini vaade
+    } else {
+      this.$router.push("/user"); // Tavakasutaja vaade
+    }
   },
-  };
+},
+};
   </script>
   
   <style scoped>
