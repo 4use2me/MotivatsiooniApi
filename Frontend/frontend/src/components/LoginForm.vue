@@ -46,7 +46,7 @@
   
             // Salvesta token localStorage'i
             const { login } = useAuth();
-            login(result.token); // Save the token and update `isAuthenticated`
+            login(result.token, result.user); // Save the token and update `isAuthenticated`
   
             // Kontrolli, kas kasutaja on admin
             if (this.username.toLowerCase() === "admin") {

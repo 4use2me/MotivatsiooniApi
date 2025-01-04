@@ -3,11 +3,12 @@ import { computed } from "vue";
 import { useAuth } from "@/composables/useAuth";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 
-const { isAuthenticated, logout } = useAuth();
+const { isAuthenticated, logout, user } = useAuth();
 const router = useRouter();
 
 // Use computed to ensure reactivity
 const isAuthenticatedState = computed(() => isAuthenticated.value);
+const username = computed(() => user.value?.UserName || "");
 
 const handleLogout = () => {
   logout();
@@ -21,12 +22,13 @@ const handleLogout = () => {
       <nav>
         <RouterLink to="/">Motiveeri ennast!</RouterLink>
         <RouterLink to="/about">Meist</RouterLink>
+        <RouterLink v-if="isAuthenticatedState" :to="`/loggedin/${username}`">Sinu leht</RouterLink>
         <!-- <RouterLink class="login-nav" to="/auth"><i class="fa-solid fa-user-plus"></i></RouterLink> -->
         <RouterLink v-if="!isAuthenticatedState" class="login-nav" to="/auth">
           <i class="fa-solid fa-user-plus"></i>
         </RouterLink>
         <button v-else class="logout-nav" @click="handleLogout">
-          Logout
+          Välju
         </button>
       </nav>
     </div>
@@ -55,7 +57,7 @@ nav a:first-of-type {
   border: 0;
 }
 
-nav .login-nav {
+nav .login-nav, .logout-nav {
   padding: 0.5rem 1rem;
   background-color: var(--button-bg, #3f7d20);
   color: var(--button-text, white);
@@ -68,9 +70,13 @@ nav .login-nav {
   margin-right: 10px;
 }
 
-nav .login-nav:hover {
+nav .login-nav:hover, .logout-nav:hover {
   background-color: var(--button-bg-hover, #18310c);
   color: var(--button-text-hover, white);
+}
+
+nav .logout-nav{
+  border: 0;
 }
 nav {
     display: flex;

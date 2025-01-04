@@ -13,8 +13,8 @@
           <td>{{ item.Quote }}</td>
           <td>{{ item.Likes }}</td>
           <td>
-          <button @click="$emit('editMotivation', item)">Muuda</button>
-          <button @click="$emit('deleteMotivation', item.MotivationID)">Kustuta</button>
+          <button class="btn" @click="$emit('editMotivation', item)"><i class="fa-solid fa-pencil"></i></button>
+          <button class="btn" @click="$emit('deleteMotivation', item.MotivationID)"><i class="fa-solid fa-trash-can"></i></button>
         </td>
         </tr>
       </tbody>
@@ -33,3 +33,13 @@
   };
   </script>
   
+<style scoped>
+  .btn {
+      background-color: var(--vt-c-dark);
+      color: white;
+      margin-right: 6px;
+    }
+    .btn:hover {
+      background-color: #51294D;
+    }
+</style>
