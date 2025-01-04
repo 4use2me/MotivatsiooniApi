@@ -1,15 +1,18 @@
 import { ref } from "vue";
 
+const user = ref(null);
 const isAuthenticated = ref(!!localStorage.getItem("token")); 
 
-const login = (token) => {
-  localStorage.setItem("token", token);
+const login = (token, userData) => {
+  localStorage.setItem("token", token); 
+  user.value = userData; 
   isAuthenticated.value = true; 
 };
 
 const logout = () => {
   console.log("Logging out..."); // Debug
   localStorage.removeItem("token");
+  user.value = null;
   isAuthenticated.value = false;
 };
 
@@ -20,6 +23,7 @@ const updateAuthState = () => {
 
 export function useAuth() {
   return {
+    user,
     isAuthenticated,
     login,
     logout,

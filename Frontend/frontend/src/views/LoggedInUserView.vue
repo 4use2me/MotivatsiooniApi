@@ -2,16 +2,22 @@
     <div>
       <div class="welcome">
         <h1>Tere tulemast, {{ username }}</h1>
-        <button class="log-out" @click="logout">Logi välja</button>
       </div>
       
   <hr>
       <!-- Kasutaja kuvamine -->
       <div v-if="userData">
-        <h3>Sinu andmed:</h3>
-        <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
-        <p><strong>Parool:</strong> {{ userData.Password }}</p>
-        <button @click="startEditingUser(userData)">Muuda</button>
+        <button class="btn data" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          Sinu andmed
+        </button>
+        <div class="collapse" id="collapseExample">
+          <div class="card card-body">
+            <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
+            <p><strong>Parool:</strong> {{ userData.Password }}</p>
+            <button class="btn change" @click="startEditingUser(userData)">Muuda</button>
+          </div>
+        </div>
+        
       </div>
   
       <!-- Kasutaja muutmise vorm -->
@@ -24,7 +30,7 @@
   <hr>
       <!-- Motivatsiooni loomise osa -->
       <div>
-        <button @click="toggleCreateMotivation">Loo motivatsioon</button>
+        <button class="btn new-motivation" @click="toggleCreateMotivation">Lisa motivatsioon</button>
         <div v-if="showMotivationForm">
           <!-- Kasutame NewMotivation komponenti -->
           <NewMotivation @motivationCreated="fetchMotivations" />
@@ -223,6 +229,26 @@
     }
     .log-out{
       float: right;
+    }
+    .card {
+      background: none;
+      width: fit-content;
+      border: 0;
+    }
+    .data, .new-motivation{
+      background-color: var(--vt-c-dark);
+      color: var(--vt-c-light);
+    }
+    .data:hover, .new-motivation {
+      background-color: #51294D;
+    }
+    .change {
+      background-color: var(--button-bg, #3f7d20);
+      color: white;
+      padding: 2px;
+    }
+    .change:hover{
+      background-color: var(--button-bg-hover, #18310c);
     }
   </style>
   
