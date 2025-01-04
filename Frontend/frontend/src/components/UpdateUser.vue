@@ -1,22 +1,19 @@
 
 <template>
     <div>
-      <form @submit.prevent="submitEdit">
-        <label for="user">Muuda kasutajat:</label>
-        <input
-          type="text"
-          id="user"
-          v-model="updatedUser.UserName" 
-          required
-        />
-        <input
-          type="text"
-          id="user"
+      <form class="row g-3" @submit.prevent="submitEdit">
+        <div class="col input-group">
+          <span class="input-group-text">Muuda kasutajat</span>
+          <input type="text" id="user" class="form-control" v-model="updatedUser.UserName" 
+          required>
+          <input type="text" class="form-control" id="user"
           v-model="updatedUser.Password" 
-          required
-        />
-        <button type="submit">Salvesta</button>
-        <button type="button" @click="cancelEdit">Tühista</button>
+          required>
+        </div>
+        <div class="col-6">
+          <button class="btn save-button" type="submit"><i class="fa-regular fa-floppy-disk"></i></button>
+          <button class="btn" type="button" @click="cancelEdit"><i class="fa-regular fa-rectangle-xmark"></i></button>
+        </div>
         <p v-if="error" class="error">{{ error }}</p>
       </form>
     </div>
@@ -102,10 +99,36 @@
   };
   </script>
   
-  <style>
+
+  
+  <style scoped>
   .error {
     color: red;
     font-weight: bold;
   }
-  </style>
+.btn {
+    background-color: var(--vt-c-dark);
+    box-shadow: 2px 2px 5px var(--vt-c-dark);
+    color: white;
+    margin-right: 6px;
+    font-size: x-large;
+    padding: 0px 6px 0px 6px;
+  }
+.btn:hover {
+    background-color: #51294D;
+  }
+.quote{
+  display: flex;
+}
+
+.save-button {
+      background-color: var(--button-bg, #3f7d20);
+      color: white;
+      box-shadow: 2px 2px 5px #18310c;
+    }
+    .save-button:hover{
+      background-color: var(--button-bg-hover, #18310c);
+    }
+</style>
+
   

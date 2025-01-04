@@ -1,17 +1,18 @@
 <template>
-    <div>
-      <form @submit.prevent="submitMotivation">
-        <div>
-          <label for="quote">Tsitaat:</label>
-          <input
-            type="text"
-            id="quote"
-            v-model="quote"
-            placeholder="Sisesta tsitaat"
-            required
-          />
-        </div>
-        <button type="submit">Salvesta</button>
+    <div class="new-quote">
+      <form  @submit.prevent="submitMotivation">
+        <div class="row g-3">
+          <div class="col input-group">
+            <span class="input-group-text">Tsitaat</span>
+            <textarea class="form-control" id="quote" rows="4" aria-label="With textarea" v-model="quote"
+              placeholder="Sisesta tsitaat" required >
+            </textarea>
+          </div>
+          <div class="col-6">
+            <button class="btn save-button" type="submit"><i class="fa-regular fa-floppy-disk"></i></button>
+          </div>
+        </div> 
+
         <p v-if="successMessage" class="success">{{ successMessage }}</p>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
@@ -85,5 +86,17 @@
   }
   .error {
     color: red;
+  }
+
+  .save-button {
+      background-color: var(--button-bg, #3f7d20);
+      color: white;
+      box-shadow: 2px 2px 5px #18310c;
+    }
+  .save-button:hover{
+      background-color: var(--button-bg-hover, #18310c);
+    }
+  .new-quote{
+    margin-top: 10px;
   }
   </style>

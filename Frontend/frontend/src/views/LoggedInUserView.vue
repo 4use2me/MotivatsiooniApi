@@ -8,10 +8,10 @@
   <hr>
       <!-- Kasutaja kuvamine -->
       <div v-if="userData">
-        <button class="btn data" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        <button class="btn data" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapseExample">
           Sinu andmed
         </button>
-        <div class="collapse" id="collapseExample">
+        <div class="collapse" id="collapse1">
           <div class="card card-body">
             <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
             <p><strong>Parool:</strong> {{ userData.Password }}</p>
@@ -31,12 +31,16 @@
   <hr>
       <!-- Motivatsiooni loomise osa -->
       <div>
-        <button class="btn new-motivation" @click="toggleCreateMotivation">Lisa motivatsioon</button>
-        <div v-if="showMotivationForm">
+        <button class="btn new-motivation" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapseExample" @click="toggleCreateMotivation">Lisa motivatsioon</button>
+        <div  id="collapse2">
+          <div v-if="showMotivationForm">
           <!-- Kasutame NewMotivation komponenti -->
           <NewMotivation @motivationCreated="fetchMotivations" />
         </div>
+        </div>
+        
       </div>
+    <hr>
       <!-- Motivatsioonide kuvamine -->
       <div v-if="motivations.length">
         <h3>Sinu motivatsioonid:</h3>
@@ -240,7 +244,7 @@
       background-color: var(--vt-c-dark);
       color: var(--vt-c-light);
     }
-    .data:hover, .new-motivation {
+    .data:hover, .new-motivation:hover {
       background-color: #51294D;
     }
     .change {
