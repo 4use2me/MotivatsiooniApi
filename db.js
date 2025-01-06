@@ -19,6 +19,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.motivations = require("./models/Motivation")(sequelize, DataTypes);
 db.users = require("./models/User")(sequelize, DataTypes);
+db.favorites = require("./models/Favorite")(sequelize, DataTypes);
 
 const sync = (async () => {
     await sequelize.sync({ alter: false});
