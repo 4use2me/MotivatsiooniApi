@@ -1,16 +1,21 @@
 <template>
     <div>
       <h1>Administraatori vaade</h1>
-      <button @click="logout">Logi välja</button>
 <hr>
       <!-- Kasutaja kuvamine -->
     <div v-if="userData">
-      <h3>Sinu andmed:</h3>
-      <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
-      <p><strong>Parool:</strong> {{ userData.Password }}</p>
-      <button @click="startEditingUser(userData)">Muuda</button>
-    </div>
-
+        <button class="btn data" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapseExample">
+          Sinu andmed
+        </button>
+        <div class="collapse" id="collapse1">
+          <div class="card card-body">
+            <p><strong>Kasutajanimi:</strong> {{ userData.UserName }}</p>
+            <p><strong>Parool:</strong> {{ userData.Password }}</p>
+            <button class="btn change" @click="startEditingUser(userData)">Muuda</button>
+          </div>
+        </div>
+        
+      </div>
     <!-- Kasutaja muutmise vorm -->
     <UpdateUser
       v-if="editingUser"
@@ -20,11 +25,13 @@
     />
 <hr>
       <!-- Filtreerimise sisend -->
-      <input 
-        type="text" 
-        v-model="userSearchQuery" 
-        placeholder="Otsi kasutajat nime või id järgi" 
-      />
+       <form>
+          <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" class="form-control" placeholder="Otsi kasutajat nime või id järgi" v-model="userSearchQuery" >
+          </div>
+       </form>
+      
       <!-- Kasutajate kuvamine -->
       <div>
         <h3>Kõik kasutajad:</h3>
@@ -33,10 +40,11 @@
         @deleteUser="deleteUser"
         />
       </div>
+
 <hr>
       <!-- Motivatsiooni loomise osa -->
       <div>
-        <button @click="toggleCreateMotivation">Loo motivatsioon</button>
+        <button class="btn new-motivation" @click="toggleCreateMotivation">Loo motivatsioon</button>
         <div v-if="showMotivationForm">
           <!-- Kasutame NewMotivation komponenti -->
           <NewMotivation @motivationCreated="fetchMotivations" />
@@ -44,12 +52,13 @@
       </div>
 <hr>
       <!-- Filtreerimise sisend -->
-      <input 
-        type=integer
-        v-model="motivationsSearchQuery" 
-        placeholder="Otsi motivatsiooni tsitaadi või kasutaja id järgi" 
-      />
-  
+       <form>
+        <div class="input-group flex-nowrap">
+          <span class="input-group-text" id="addon-wrapping"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <input type="text" class="form-control" placeholder="Otsi motivatsiooni tsitaadi või kasutaja id järgi" v-model="motivationsSearchQuery" aria-label="Username" aria-describedby="addon-wrapping">
+        </div>
+       </form>
+      
       <!-- Motivatsioonide kuvamine -->
       <div v-if="motivations.length">
         <h3>Kõik motivatsioonid:</h3>
@@ -328,3 +337,25 @@
   };
   </script>
   
+<style scoped>
+    .card {
+      background: none;
+      width: fit-content;
+      border: 0;
+    }
+    .data, .new-motivation{
+      background-color: var(--vt-c-dark);
+      color: var(--vt-c-light);
+    }
+    .data:hover, .new-motivation:hover{
+      background-color: #51294D;
+    }
+    .change {
+      background-color: var(--button-bg, #3f7d20);
+      color: white;
+      padding: 2px;
+    }
+    .change:hover{
+      background-color: var(--button-bg-hover, #18310c);
+    }
+</style>
