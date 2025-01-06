@@ -21,7 +21,7 @@ export default {
                 <td>{{item.UserID}}</td>
                 <td>{{item.UserName}}</td>
                 <td>
-                    <button @click="$emit('deleteUser', item.UserID)">Kustuta</button>
+                    <button class="btn" @click="$emit('deleteUser', item.UserID)"><i class="fa-solid fa-trash-can"></i></button>
                 </td>
             </tr>
         </tbody>
@@ -29,4 +29,12 @@ export default {
 </template>
 
 <style scoped>
+    .btn {
+      background-color: var(--vt-c-dark);
+      color: white;
+      margin-right: 6px;
+    }
+    .btn:hover {
+      background-color: #51294D;
+    }
 </style>
