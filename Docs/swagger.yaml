@@ -69,65 +69,6 @@ paths:
                     description: 'Return status 400 to the user, if one or multiple of parameters are missing'
             summary: Add new user
             description: Adds a new user into the list.
-    /ownerships:
-        get:
-            tags:
-                - ownerships
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                List of ownerships:
-                                    value:
-                                        - 1
-                                        - 2
-                    description: Returns a list of ownerships
-            summary: get list of all ownerships from api
-            description: Returns a list of all ownerships in the api.
-        post:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Ownership'
-                        examples:
-                            Example of a ownership:
-                                value:
-                                    UserID: 2
-                                    MotivationID: 4
-                required: true
-            tags:
-                - ownerships
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Ownership that is added:
-                                    value:
-                                        UserID: 2
-                                        MotivationID: 4
-                    description: 'Return code 201 to the user, if creation of new ownership was successful'
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing parameters:
-                                    value: 'error: "One or multiple parameters are missing"'
-                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
-            summary: add new ownership
-            description: Adds a new ownership into the array
     '/users/{id}':
         get:
             tags:
@@ -281,91 +222,6 @@ paths:
                     description: Return error 404 if the user with id is not found
             summary: Delete a specific user
             description: Deletes a user from the array based on given id
-    '/ownerships/{id}':
-        get:
-            tags:
-                - ownerships
-            parameters:
-                -
-                    examples:
-                        Example of id of a ownership:
-                            value: '1'
-                    name: id
-                    description: Id of a ownership the user has requested.
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Example of a ownership with details:
-                                    value:
-                                        UserID: 2
-                                        MotivationID: 4
-                    description: Returns details of a ownership to the user
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Invalid ownership id:
-                                    value: 'error: "Invalid id inserted"'
-                    description: Return status code 400 to the user if an invalid id was entered
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Quote/w+ was not found:
-                                    value: 'error: "Ownership\\w+ was not found in ownership array."'
-                    description: Return error 404 to the user if ownership with id is not found
-            summary: Get full details of a ownership
-            description: Returns full details of a given ownership
-        delete:
-            tags:
-                - ownerships
-            parameters:
-                -
-                    examples:
-                        Example of id of an ownership:
-                            value: '1'
-                    name: id
-                    description: Id of an ownership the user has requested
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '204':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                successful error:
-                                    value:
-                                        error: no content
-                    description: 'Return status code 204 to the user, upon successful deletion of an owneship'
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing ownership:
-                                    value: 'error: "Ownership not found"'
-                    description: Return error 404 to the user if ownership with id is not found
-            summary: Delete an ownership
-            description: Deletes an ownership from the array based on given id
     /motivations:
         get:
             tags:
@@ -580,6 +436,150 @@ paths:
                     description: Return error 404 to the user if motivation with id is not found
             summary: Delete a specific motivation
             description: Deletes a motivation from the array based on given id
+    /favorites:
+        get:
+            tags:
+                - favorites
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of favorites:
+                                    value:
+                                        - 1
+                                        - 2
+                    description: Returns a list of favorites
+            summary: get list of all favorites from api
+            description: Returns a list of all favorites in the api.
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Favorite'
+                        examples:
+                            Example of a favorite:
+                                value:
+                                    UserID: 2
+                                    MotivationID: 4
+                required: true
+            tags:
+                - favorites
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Favorite that is added:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: 'Return code 201 to the user, if creation of new favorite was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing parameters:
+                                    value: 'error: "One or multiple parameters are missing"'
+                    description: 'Return status 400 to the user, if one or multiple of parameters are missing'
+            summary: add new favorite
+            description: Adds a new favorite into the array
+    '/favorites/{id}':
+        get:
+            tags:
+                - favorites
+            parameters:
+                -
+                    examples:
+                        Example of id of a favorite:
+                            value: '1'
+                    name: id
+                    description: Id of a favorite the user has requested.
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Example of a favorite with details:
+                                    value:
+                                        UserID: 2
+                                        MotivationID: 4
+                    description: Returns details of a favorite to the user
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Invalid favorite id:
+                                    value: 'error: "Invalid id inserted"'
+                    description: Return status code 400 to the user if an invalid id was entered
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Quote/w+ was not found:
+                                    value: 'error: "Favorite\\w+ was not found in favorite array."'
+                    description: Return error 404 to the user if favorite with id is not found
+            summary: Get full details of a favorite
+            description: Returns full details of a given favorite
+        delete:
+            tags:
+                - favorites
+            parameters:
+                -
+                    examples:
+                        Example of id of an favorite:
+                            value: '1'
+                    name: id
+                    description: Id of an favorite the user has requested
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                successful error:
+                                    value:
+                                        error: no content
+                    description: 'Return status code 204 to the user, upon successful deletion of an favorite'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing favorite:
+                                    value: 'error: "Favorite not found"'
+                    description: Return error 404 to the user if favorite with id is not found
+            summary: Delete an favorite
+            description: Deletes an favorite from the array based on given id
 components:
     schemas:
         error:
@@ -600,12 +600,6 @@ components:
                 Date: 24.11.2024
                 UserName: Aigi
                 Password: Qwerty1
-        Ownership:
-            description: Example of a valid ownership
-            type: object
-            example:
-                UserID: 2
-                MotivationID: 4
         Motivation:
             title: Root Type for Quote
             description: Example of a valid quote
@@ -624,3 +618,9 @@ components:
                 Date: 24.11.2024
                 UserID: '1'
                 Likes: '0'
+        Favorite:
+            description: Example of a valid favorite
+            type: object
+            example:
+                UserID: 2
+                MotivationID: 4
