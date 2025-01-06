@@ -58,3 +58,31 @@ exports.getFavorites = [authenticate, async (req, res) => {
         return res.status(500).json({ error: 'Serveri viga' });
     }
 }];
+
+exports.removeFavorite = [authenticate, async (req, res) => {
+    try {
+        const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
+        const MotivationID = parseInt(req.params.id); // Tsitaadi ID, mille tahame eemaldada
+
+        if (!UserID || isNaN(MotivationID)) {
+            return res.status(400).json({ error: 'Kohustuslikud parameetrid puuduvad' });
+        }
+
+        // Otsi Favorite tabelist, kas see tsitaat on kasutaja lemmikute seas
+        const favorite = await db.Favorite.findOne({
+            where: { UserID, MotivationID },
+        });
+
+        if (!favorite) {
+            return res.status(404).json({ error: 'Lemmikut ei leitud' });
+        }
+
+        // Eemalda lemmik
+        await favorite.destroy();
+
+        return res.status(200).json({ message: 'Lemmik edukalt eemaldatud' });
+    } catch (error) {
+        console.error('Viga lemmiku eemaldamisel:', error);
+        return res.status(500).json({ error: 'Serveri viga' });
+    }
+}];
