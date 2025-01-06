@@ -31,3 +31,30 @@ exports.addFavorite = [authenticate, async (req, res) => {
         res.status(500).json({ error: "Serveri viga" });
     }
 }];
+
+exports.getFavorites = [authenticate, async (req, res) => {
+    try {
+        const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
+        if (!UserID) {
+            return res.status(400).json({ error: 'Kasutaja ID puudub' });
+        }
+
+        // Otsi kasutaja lemmikuid, seostades lemmikud Motivations tabeliga
+        const favorites = await db.Favorite.findAll({
+            where: { UserID },
+            include: {
+                model: db.Motivation,
+                attributes: ['MotivationID', 'Quote', 'Likes']
+            }
+        });
+
+        if (favorites.length === 0) {
+            return res.status(404).json({ message: 'Lemmikuid ei leitud' });
+        }
+
+        return res.status(200).json({ favorites });
+    } catch (error) {
+        console.error('Viga lemmikute laadimisel:', error);
+        return res.status(500).json({ error: 'Serveri viga' });
+    }
+}];
