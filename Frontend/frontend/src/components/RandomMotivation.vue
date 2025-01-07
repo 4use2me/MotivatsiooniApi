@@ -92,6 +92,8 @@ export default {
         if (!response.ok) throw new Error("Lemmikuks lisamine ebaõnnestus");
 
         this.isFavorited = true;
+        console.log("Is Favorited:", this.isFavorited);
+
         this.favoriteMessage = "Tsitaat lisati edukalt lemmikuks!";
       } catch (error) {
         console.error("Viga lemmikuks lisamisel:", error);
@@ -118,10 +120,10 @@ export default {
     </div>
 
     <!-- Lemmikuks lisamise nupp, kuvatakse ainult siis, kui kasutaja on sisse logitud -->
-    <div v-if="isLoggedIn && !isFavorited" class="favorite-container">
-      <button @click="addFavorite" class="favorite-button">
-        Lisa Lemmikuks
-      </button>
+    <div v-if="isLoggedIn " class="favorite-container">
+      <span :class="['star-icon', { favorited: isFavorited }]" @click="addFavorite">
+        <i class="fas fa-star"></i>
+      </span>
     </div>
 
     <!-- Lemmikuks lisamise teade -->
@@ -173,6 +175,24 @@ blockquote {
 .heart-icon.liked {
   color: #fb4b4e;
 }
+
+.favorite-container {
+  display: flex;
+  bottom: 5px;
+  right: 66px;
+  position: absolute;
+  gap: 2px;
+}
+.star-icon {
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s ease;
+}
+.star-icon.favorited {
+  color: #f3f558;
+}
+
 .refresh {
   display: flex;
   justify-content: flex-start;
