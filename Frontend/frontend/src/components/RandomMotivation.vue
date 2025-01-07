@@ -32,8 +32,41 @@ export default {
       } catch (error) {
         console.error("Viga tsitaadi laadimisel:", error);
         this.randomMotivation = { Quote: "Praegu ei õnnestunud tsitaati laadida.", Likes: 1 };
+        this.isLiked = false;
+        this.isFavorited = false;
+        this.favoriteMessage = "";
       }
     },
+
+    // Lülitab meeldivaks märkimise staatuse ja uuendab serverit
+    async toggleLike() {
+      if (!this.randomMotivation || !this.randomMotivation.MotivationID) {
+        console.error("Puudub tsitaat või selle ID");
+        return;
+      }
+      console.log("RandomMotivation ID:", this.randomMotivation?.MotivationID);
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/motivations/${this.randomMotivation.MotivationID}/like`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Meeldivaks märkimine ebaõnnestus");
+
+        const { likes } = await response.json();
+        this.randomMotivation.Likes = likes; // Uuenda lokaalselt meeldimiste arvu
+        this.isLiked = true; // Näita, et tsitaat on meeldivaks märgitud
+      } catch (error) {
+        console.error("Viga meeldivaks märkimisel:", error);
+      }
+    },
+
     // Lisa tsitaat lemmikuks
     async addFavorite() {
       if (!this.randomMotivation?.MotivationID) return;
