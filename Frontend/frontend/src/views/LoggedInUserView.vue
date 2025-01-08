@@ -58,6 +58,30 @@
         @motivationUpdated="onMotivationUpdated"
         @cancelEdit="cancelEditingMotivation"
       />
+
+      <!-- Favorites Table -->
+    <div v-if="favorites.length">
+      <h2>Your Favorites</h2>
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th class="col-9">Motivatsioon</th>
+            <th class="col">Tegevused</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="favorite in favorites" :key="favorite.FavoriteID">
+            <td>{{ favorite.Motivation.Quote }}</td>
+            <td>
+              <button class="btn remove" @click="removeFavorite(favorite.FavoriteID)">Eemalda lemmikutest</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else>
+      <p>You have no favorite quotes yet.</p>
+    </div>
     </div>
   </template>
   
@@ -79,6 +103,7 @@
         userData: null, // Siia salvestatakse kasutaja andmed
         editingUser: null,
         motivations: [], // Motivatsioonide loend
+        favorites: [], // Stores user's favorite quotes
         showMotivationForm: false, // Motiveerimisvormi näitamine
         editingMotivation: null, // Hetkel redigeeritav motivatsioon
       };
@@ -121,6 +146,8 @@
       } catch (error) {
         console.error("Ühendustõrge kasutaja andmete laadimisel:", error);
       }
+
+      
     },
   
       async fetchMotivations() {
@@ -190,6 +217,48 @@
           console.error("Viga motivatsiooni kustutamisel:", error);
         }
       },
+
+      async fetchFavorites() {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch("http://localhost:8080/favorites/user", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        console.log("Favorites response:", result);
+        if (response.ok) {
+          this.favorites = result.favorites || result;
+        } else {
+          console.error("Lemmikute laadimine ebaõnnestus");
+        }
+      } catch (error) {
+        console.error("Ühendustõrge:", error);
+      }
+    },
+    async removeFavorite(FavoriteId) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`http://localhost:8080/favorites/user/${FavoriteId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          console.log("Favorite deleted:", FavoriteId);
+          this.favorites = this.favorites.filter((fav) => fav.FavoriteID !== FavoriteId);
+
+        } else {
+          console.error("Failed to delete favorite");
+        }
+      } catch (error) {
+        console.error("Error deleting favorite:", error);
+      }
+    },
   
       startEditingUser(user) {
         console.log("Redigeeritav kasutaja:", user);
@@ -218,6 +287,7 @@
     mounted() {
       this.fetchUserData(); // Laadi sisseloginud kasutaja andmed
       this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
+      this.fetchFavorites(); // Fetch user's favorite quotes
     },
     components: {
       UsersMotivations, // Registreerige UsersMotivations komponent
@@ -240,11 +310,11 @@
       width: fit-content;
       border: 0;
     }
-    .data, .new-motivation{
+    .data, .new-motivation, .remove{
       background-color: var(--vt-c-dark);
       color: var(--vt-c-light);
     }
-    .data:hover, .new-motivation:hover {
+    .data:hover, .new-motivation:hover, .remove:hover {
       background-color: #51294D;
     }
     .change {
