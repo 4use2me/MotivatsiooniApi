@@ -34,6 +34,33 @@ export default {
         this.randomMotivation = { Quote: "Praegu ei õnnestunud tsitaati laadida.", Likes: 1 };
       }
     },
+
+     // Lülitab meeldivaks märkimise staatuse ja uuendab serverit
+     async toggleLike() {
+      if (!this.randomMotivation || !this.randomMotivation.MotivationID) {
+        console.error("Puudub tsitaat või selle ID");
+        return;
+      }
+      console.log("RandomMotivation ID:", this.randomMotivation?.MotivationID);
+      try {
+        const response = await fetch(
+          `http://localhost:8080/motivations/${this.randomMotivation.MotivationID}/like`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Meeldivaks märkimine ebaõnnestus");
+        const { likes } = await response.json();
+        this.randomMotivation.Likes = likes; // Uuenda lokaalselt meeldimiste arvu
+        this.isLiked = true; // Näita, et tsitaat on meeldivaks märgitud
+      } catch (error) {
+        console.error("Viga meeldivaks märkimisel:", error);
+      }
+    },
+
     // Lisa tsitaat lemmikuks
     async addFavorite() {
       if (!this.randomMotivation?.MotivationID) return;
@@ -85,10 +112,10 @@ export default {
     </div>
 
     <!-- Lemmikuks lisamise nupp, kuvatakse ainult siis, kui kasutaja on sisse logitud -->
-    <div v-if="isLoggedIn && !isFavorited" class="favorite-container">
-      <button @click="addFavorite" class="favorite-button">
-        Lisa Lemmikuks
-      </button>
+    <div v-if="isLoggedIn " class="favorite-container">
+      <span :class="['star-icon', { favorited: isFavorited }]" @click="addFavorite">
+        <i class="fas fa-star"></i>
+      </span>
     </div>
 
     <!-- Lemmikuks lisamise teade -->
@@ -139,6 +166,22 @@ blockquote {
 }
 .heart-icon.liked {
   color: #fb4b4e;
+}
+.favorite-container {
+  display: flex;
+  bottom: 5px;
+  right: 66px;
+  position: absolute;
+  gap: 2px;
+}
+.star-icon {
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s ease;
+}
+.star-icon.favorited {
+  color: #f3f558;
 }
 .refresh {
   display: flex;
