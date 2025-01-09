@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <div class="welcome">
@@ -61,22 +60,9 @@
     <!-- Favorites Table -->
     <div style="color: black;" v-if="favorites.length">
       <h3>Sinu lemmikud:</h3>
-      <table class="table table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th class="col-9">Motivatsioon</th>
-            <th class="col">Tegevused</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="favorite in favorites" :key="favorite.FavoriteID">
-            <td>{{ favorite.Motivation.Quote }}</td>
-            <td>
-              <button class="btn remove" @click="removeFavorite(favorite.FavoriteID)">Eemalda lemmikutest</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Kasutame FavoritesTable komponenti -->
+        <FavoritesTable :items="favorites"
+        @removeFavorite="removeFavorite" />
     </div>
     <div v-else>
       <p>You have no favorite quotes yet.</p>
@@ -89,6 +75,7 @@ import UsersMotivations from '../components/UsersMotivations.vue'; // Importige 
 import NewMotivation from '../components/NewMotivation.vue'; // Importige NewMotivation komponent
 import UpdateMotivation from "../components/UpdateMotivation.vue";
 import UpdateUser from "../components/UpdateUser.vue";
+import FavoritesTable from '../components/FavoritesTable.vue';
 
 export default {
   props: {
@@ -293,6 +280,7 @@ export default {
     NewMotivation, // Registreerige NewMotivation komponent
     UpdateMotivation,
     UpdateUser, // Registreerige UpdateUser komponent
+    FavoritesTable, // Registreerige FavoritesTable kompcomponent
   },
 };
 </script>

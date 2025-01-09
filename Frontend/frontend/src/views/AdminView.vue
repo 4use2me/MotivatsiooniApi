@@ -84,6 +84,17 @@
         @motivationUpdated="onMotivationUpdated"
         @cancelEdit="cancelEditingMotivation"
       />
+
+      <!-- Favorites Table -->
+      <div style="color: black;" v-if="favorites.length">
+        <h3>Sinu lemmikud:</h3>
+        <!-- Kasutame FavoritesTable komponenti -->
+          <FavoritesTable :items="favorites"
+          @removeFavorite="removeFavorite" />
+      </div>
+      <div v-else>
+        <p>You have no favorite quotes yet.</p>
+      </div>
     </div>
   </template>
   
@@ -93,6 +104,7 @@
   import UpdateMotivation from "../components/UpdateMotivation.vue";
   import UsersTable from '../components/UsersTable.vue'
   import UpdateUser from "../components/UpdateUser.vue";
+  import FavoritesTable from '../components/FavoritesTable.vue';
   
   export default {
     props: {
@@ -109,6 +121,7 @@
         motivationsSearchQuery: '',
         sortDirection: "asc",
         motivations: [], // Motivatsioonide loend
+        favorites: [], // Stores user's favorite quotes
         allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
         editingMotivation: null, // Hetkel redigeeritav motivatsioon
@@ -302,6 +315,48 @@
         }
       },
 
+      async fetchFavorites() {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch("http://localhost:8080/favorites/user", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        console.log("Favorites response:", result);
+        if (response.ok) {
+          this.favorites = result.favorites || result;
+        } else {
+          console.error("Lemmikute laadimine ebaõnnestus");
+        }
+      } catch (error) {
+        console.error("Ühendustõrge:", error);
+      }
+    },
+    async removeFavorite(FavoriteId) {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch(`http://localhost:8080/favorites/user/${FavoriteId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          console.log("Favorite deleted:", FavoriteId);
+          this.favorites = this.favorites.filter((fav) => fav.FavoriteID !== FavoriteId);
+
+        } else {
+          console.error("Failed to delete favorite");
+        }
+      } catch (error) {
+        console.error("Error deleting favorite:", error);
+      }
+    },
+
       startEditingUser(user) {
       console.log("Redigeeritav kasutaja:", user);
       this.editingUser = user; // Määra redigeeritav kasutaja
@@ -331,6 +386,7 @@
       this.fetchMotivations(); // Laadi motivatsioonid komponenti laadimisel
       this.fetchUsers(); 
       this.fetchUserData(); // Laadi sisseloginud kasutaja andmed
+      this.fetchFavorites(); // Fetch user's favorite quotes
     },
     components: {
       AllMotivations, // Registreerige AllMotivations komponent
@@ -338,6 +394,7 @@
       UpdateMotivation,
       UsersTable,
       UpdateUser,
+      FavoritesTable, // Registreerige FavoritesTable kompcomponent
     },
   };
   </script>
