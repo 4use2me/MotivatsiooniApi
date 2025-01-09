@@ -1,6 +1,12 @@
 const { db } = require("../db");
 const authenticate = require("./authMiddleware");
 
+exports.getAll = async (req, res) => {
+    const favorites = await db.favorites.findAll();
+    res.send (favorites.map(({FavoriteID, MotivationID, UserID}) => {return {FavoriteID, MotivationID, UserID}}))
+    
+ };
+
 exports.addFavorite = [authenticate, async (req, res) => {
     try {
         const { MotivationID } = req.body; // Tsitaadi ID, mille kasutaja lisab lemmikutesse
@@ -40,13 +46,15 @@ exports.getFavorites = [authenticate, async (req, res) => {
         }
 
         // Otsi kasutaja lemmikuid, seostades lemmikud Motivations tabeliga
-        const favorites = await db.Favorite.findAll({
+        const favorites = await db.favorites.findAll({
             where: { UserID },
             include: {
-                model: db.Motivation,
+                model: db.motivations,
+                as:'Motivation',
                 attributes: ['MotivationID', 'Quote', 'Likes']
-            }
+            },
         });
+        console.log('Leitud lemmikud:', favorites)
 
         if (favorites.length === 0) {
             return res.status(404).json({ message: 'Lemmikuid ei leitud' });
@@ -62,15 +70,15 @@ exports.getFavorites = [authenticate, async (req, res) => {
 exports.removeFavorite = [authenticate, async (req, res) => {
     try {
         const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
-        const MotivationID = parseInt(req.params.id); // Tsitaadi ID, mille tahame eemaldada
+        const FavoriteID = parseInt(req.params.id); 
 
-        if (!UserID || isNaN(MotivationID)) {
+        if (!UserID || isNaN(FavoriteID)) {
             return res.status(400).json({ error: 'Kohustuslikud parameetrid puuduvad' });
         }
 
         // Otsi Favorite tabelist, kas see tsitaat on kasutaja lemmikute seas
-        const favorite = await db.Favorite.findOne({
-            where: { UserID, MotivationID },
+        const favorite = await db.favorites.findOne({
+            where: { UserID, FavoriteID },
         });
 
         if (!favorite) {

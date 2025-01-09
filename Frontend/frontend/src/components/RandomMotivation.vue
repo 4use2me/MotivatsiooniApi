@@ -32,20 +32,16 @@ export default {
       } catch (error) {
         console.error("Viga tsitaadi laadimisel:", error);
         this.randomMotivation = { Quote: "Praegu ei õnnestunud tsitaati laadida.", Likes: 1 };
-        this.isLiked = false;
-        this.isFavorited = false;
-        this.favoriteMessage = "";
       }
     },
 
-    // Lülitab meeldivaks märkimise staatuse ja uuendab serverit
-    async toggleLike() {
+     // Lülitab meeldivaks märkimise staatuse ja uuendab serverit
+     async toggleLike() {
       if (!this.randomMotivation || !this.randomMotivation.MotivationID) {
         console.error("Puudub tsitaat või selle ID");
         return;
       }
       console.log("RandomMotivation ID:", this.randomMotivation?.MotivationID);
-
       try {
         const response = await fetch(
           `http://localhost:8080/motivations/${this.randomMotivation.MotivationID}/like`,
@@ -56,9 +52,7 @@ export default {
             },
           }
         );
-
         if (!response.ok) throw new Error("Meeldivaks märkimine ebaõnnestus");
-
         const { likes } = await response.json();
         this.randomMotivation.Likes = likes; // Uuenda lokaalselt meeldimiste arvu
         this.isLiked = true; // Näita, et tsitaat on meeldivaks märgitud
@@ -72,7 +66,7 @@ export default {
       if (!this.randomMotivation?.MotivationID) return;
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/favorites", {
+        const response = await fetch("http://localhost:8080/favorites/user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -92,8 +86,6 @@ export default {
         if (!response.ok) throw new Error("Lemmikuks lisamine ebaõnnestus");
 
         this.isFavorited = true;
-        console.log("Is Favorited:", this.isFavorited);
-
         this.favoriteMessage = "Tsitaat lisati edukalt lemmikuks!";
       } catch (error) {
         console.error("Viga lemmikuks lisamisel:", error);
@@ -175,7 +167,6 @@ blockquote {
 .heart-icon.liked {
   color: #fb4b4e;
 }
-
 .favorite-container {
   display: flex;
   bottom: 5px;
@@ -192,7 +183,6 @@ blockquote {
 .star-icon.favorited {
   color: #f3f558;
 }
-
 .refresh {
   display: flex;
   justify-content: flex-start;

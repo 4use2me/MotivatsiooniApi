@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    console.log(Motivation === sequelize.models.Motivation);
+    Motivation.associate = (models) => {
+        Motivation.hasMany(models.favorites, {
+            foreignKey: 'MotivationID',
+            as: 'Favorites', 
+        });
+    };
     return Motivation;
 }

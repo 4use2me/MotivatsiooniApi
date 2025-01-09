@@ -10,13 +10,20 @@ module.exports = (sequelize, DataTypes) => {
             },
             MotivationID: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
             },
             UserID: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
             }
         }
     );
 
-    console.log(Favorite === sequelize.models.Favorite);
+    Favorite.associate = (models) => {
+        Favorite.belongsTo(models.motivations, {
+            foreignKey: 'MotivationID',
+            as: 'Motivation', // Must match the alias used in `getFavorites` include
+        });
+    };
     return Favorite;
 }
