@@ -38,9 +38,8 @@
         <NewMotivation @motivationCreated="fetchMotivations" />
       </div>
       </div>
-      
     </div>
-  <hr>
+<hr>
     <!-- Motivatsioonide kuvamine -->
     <div style="color: black;" v-if="motivations.length">
       <h3>Sinu motivatsioonid:</h3>
@@ -60,28 +59,28 @@
     />
 
     <!-- Favorites Table -->
-  <div style="color: black;" v-if="favorites.length">
-    <h3>Sinu lemmikud:</h3>
-    <table class="table table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th class="col-9">Motivatsioon</th>
-          <th class="col">Tegevused</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="favorite in favorites" :key="favorite.FavoriteID">
-          <td>{{ favorite.Motivation.Quote }}</td>
-          <td>
-            <button class="btn remove" @click="removeFavorite(favorite.FavoriteID)">Eemalda lemmikutest</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div v-else>
-    <p>You have no favorite quotes yet.</p>
-  </div>
+    <div style="color: black;" v-if="favorites.length">
+      <h3>Sinu lemmikud:</h3>
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th class="col-9">Motivatsioon</th>
+            <th class="col">Tegevused</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="favorite in favorites" :key="favorite.FavoriteID">
+            <td>{{ favorite.Motivation.Quote }}</td>
+            <td>
+              <button class="btn remove" @click="removeFavorite(favorite.FavoriteID)">Eemalda lemmikutest</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else>
+      <p>You have no favorite quotes yet.</p>
+    </div>
   </div>
 </template>
 

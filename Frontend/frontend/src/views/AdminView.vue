@@ -16,6 +16,7 @@
         </div>
         
       </div>
+
     <!-- Kasutaja muutmise vorm -->
     <UpdateUser
       v-if="editingUser"
@@ -24,6 +25,9 @@
       @cancelEdit="cancelEditingUser"
     />
 <hr>
+      <div style="color: black;">
+        <h3>Kõik kasutajad:</h3>
+      </div>
       <!-- Filtreerimise sisend -->
        <form>
           <div class="input-group flex-nowrap">
@@ -34,7 +38,6 @@
       
       <!-- Kasutajate kuvamine -->
       <div>
-        <h3>Kõik kasutajad:</h3>
         <!-- Kasutame UsersTable komponenti -->
         <UsersTable :items="filteredUsers" 
         @deleteUser="deleteUser"
@@ -44,13 +47,16 @@
 <hr>
       <!-- Motivatsiooni loomise osa -->
       <div>
-        <button class="btn new-motivation" @click="toggleCreateMotivation">Loo motivatsioon</button>
+        <button class="btn new-motivation" @click="toggleCreateMotivation">Lisa motivatsioon</button>
         <div v-if="showMotivationForm">
           <!-- Kasutame NewMotivation komponenti -->
           <NewMotivation @motivationCreated="fetchMotivations" />
         </div>
       </div>
 <hr>
+      <div style="color: black;">
+        <h3>Kõik motivatsioonid:</h3>
+      </div>
       <!-- Filtreerimise sisend -->
        <form>
         <div class="input-group flex-nowrap">
@@ -61,7 +67,6 @@
       
       <!-- Motivatsioonide kuvamine -->
       <div v-if="motivations.length">
-        <h3>Kõik motivatsioonid:</h3>
         <!-- Kasutame AllMotivations komponenti -->
         <AllMotivations 
         :items="filteredMotivations"
