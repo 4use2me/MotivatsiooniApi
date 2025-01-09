@@ -42,7 +42,7 @@
     </div>
   <hr>
     <!-- Motivatsioonide kuvamine -->
-    <div v-if="motivations.length">
+    <div style="color: black;" v-if="motivations.length">
       <h3>Sinu motivatsioonid:</h3>
       <!-- Kasutame UsersMotivations komponenti -->
       <UsersMotivations :items="motivations"
@@ -60,8 +60,8 @@
     />
 
     <!-- Favorites Table -->
-  <div v-if="favorites.length">
-    <h2>Your Favorites</h2>
+  <div style="color: black;" v-if="favorites.length">
+    <h3>Sinu lemmikud:</h3>
     <table class="table table-striped">
       <thead class="table-dark">
         <tr>

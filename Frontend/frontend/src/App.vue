@@ -21,7 +21,7 @@ const handleLogout = () => {
     <div>
       <nav>
         <RouterLink to="/">Motiveeri ennast!</RouterLink>
-        <RouterLink to="/about">Meist</RouterLink>
+        <!-- <RouterLink to="/about">Meist</RouterLink> -->
         <RouterLink v-if="isAuthenticatedState" :to="`/loggedin/${username}`">Sinu leht</RouterLink>
         <!-- <RouterLink class="login-nav" to="/auth"><i class="fa-solid fa-user-plus"></i></RouterLink> -->
         <RouterLink v-if="!isAuthenticatedState" class="login-nav" to="/auth">
