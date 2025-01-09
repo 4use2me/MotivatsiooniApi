@@ -19,7 +19,7 @@ export default {
           <tr v-for="favorite in items" :key="favorite.FavoriteID">
             <td>{{ favorite.Motivation.Quote }}</td>
             <td>
-              <button class="btn remove" @click="removeFavorite(favorite.FavoriteID)">Eemalda lemmikutest</button>
+              <button class="btn remove" @click="$emit('removeFavorite', favorite.FavoriteID)">Eemalda lemmikutest</button>
             </td>
           </tr>
         </tbody>
