@@ -104,6 +104,7 @@
   import UpdateMotivation from "../components/UpdateMotivation.vue";
   import UsersTable from '../components/UsersTable.vue'
   import UpdateUser from "../components/UpdateUser.vue";
+  import UsersMotivations from '../components/UsersMotivations.vue';
   import FavoritesTable from '../components/FavoritesTable.vue';
   
   export default {
@@ -393,6 +394,7 @@
       NewMotivation, // Registreerige NewMotivation komponent
       UpdateMotivation,
       UsersTable,
+      UsersMotivations,
       UpdateUser,
       FavoritesTable, // Registreerige FavoritesTable kompcomponent
     },

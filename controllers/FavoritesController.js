@@ -38,23 +38,30 @@ exports.addFavorite = [authenticate, async (req, res) => {
     }
 }];
 
+
 exports.getFavorites = [authenticate, async (req, res) => {
     try {
         const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
+        const isAdmin = req.isAdmin; 
+        
         if (!UserID) {
-            return res.status(400).json({ error: 'Kasutaja ID puudub' });
+            return res.status(400).json({ error: 'User ID is missing' });
         }
 
-        // Otsi kasutaja lemmikuid, seostades lemmikud Motivations tabeliga
+        const whereCondition = isAdmin ? {} : { UserID }; // Adminil on võimalus kõiki lemmikuid näha, kasutaja enda omi
+
+        // Otsi lemmikuid, seostades lemmikud Motivations tabeliga
         const favorites = await db.favorites.findAll({
-            where: { UserID },
+            where: whereCondition, // No filtering for admin, otherwise filter by UserID
             include: {
                 model: db.motivations,
-                as:'Motivation',
-                attributes: ['MotivationID', 'Quote', 'Likes']
+                as: 'Motivation',
+                required: true,
+                attributes: ['MotivationID', 'Quote', 'Likes'], 
             },
         });
-        console.log('Leitud lemmikud:', favorites)
+
+        console.log('Favorites fetched:', favorites);
 
         if (favorites.length === 0) {
             return res.status(404).json({ message: 'Lemmikuid ei leitud' });
@@ -63,7 +70,7 @@ exports.getFavorites = [authenticate, async (req, res) => {
         return res.status(200).json({ favorites });
     } catch (error) {
         console.error('Viga lemmikute laadimisel:', error);
-        return res.status(500).json({ error: 'Serveri viga' });
+        return res.status(500).json({ error: 'Serveri error' });
     }
 }];
 

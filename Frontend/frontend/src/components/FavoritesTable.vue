@@ -3,7 +3,7 @@ export default {
     name: "FavoritesTable",
     props: {
         items: Array  
-    }
+    }   
 }
 </script>
 
