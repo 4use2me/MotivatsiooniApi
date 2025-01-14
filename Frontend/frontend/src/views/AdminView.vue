@@ -25,6 +25,16 @@
       @cancelEdit="cancelEditingUser"
     />
 <hr>
+
+      <!-- Motivatsiooni loomise osa -->
+      <div>
+        <button class="btn new-motivation" @click="toggleCreateMotivation">Lisa motivatsioon</button>
+        <div v-if="showMotivationForm">
+          <!-- Kasutame NewMotivation komponenti -->
+          <NewMotivation @motivationCreated="fetchMotivations" />
+        </div>
+      </div>
+<hr>
       <div style="color: black;">
         <h3>Kõik kasutajad:</h3>
       </div>
@@ -45,15 +55,7 @@
       </div>
 
 <hr>
-      <!-- Motivatsiooni loomise osa -->
-      <div>
-        <button class="btn new-motivation" @click="toggleCreateMotivation">Lisa motivatsioon</button>
-        <div v-if="showMotivationForm">
-          <!-- Kasutame NewMotivation komponenti -->
-          <NewMotivation @motivationCreated="fetchMotivations" />
-        </div>
-      </div>
-<hr>
+      
       <div style="color: black;">
         <h3>Kõik motivatsioonid:</h3>
       </div>
@@ -87,7 +89,7 @@
 
       <!-- Favorites Table -->
       <div style="color: black;" v-if="favorites.length">
-        <h3>Sinu lemmikud:</h3>
+        <h3>Lemmikud:</h3>
         <!-- Kasutame FavoritesTable komponenti -->
           <FavoritesTable :items="favorites"
           @removeFavorite="removeFavorite" />
@@ -338,13 +340,13 @@
       }
     },
     async removeFavorite(FavoriteId) {
-      const token = localStorage.getItem("token");
+      // const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`http://localhost:8080/favorites/user/${FavoriteId}`, {
+        const response = await fetch(`http://localhost:8080/favorites/${FavoriteId}`, {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         });
         if (response.ok) {
           console.log("Favorite deleted:", FavoriteId);
