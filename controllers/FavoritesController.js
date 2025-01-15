@@ -43,12 +43,13 @@ exports.getFavorites = [authenticate, async (req, res) => {
     try {
         const UserID = req.UserID; // Kasutaja ID saadakse autentimise middleware'st
         const isAdmin = req.isAdmin; 
+        const ownOnly = req.query.own === 'true';
         
         if (!UserID) {
             return res.status(400).json({ error: 'User ID is missing' });
         }
 
-        const whereCondition = isAdmin ? {} : { UserID }; // Adminil on võimalus kõiki lemmikuid näha, kasutaja enda omi
+        const whereCondition = isAdmin ? ownOnly ? { UserID } : {} : { UserID }; // Adminil on võimalus kõiki lemmikuid näha, kasutaja enda omi
 
         // Otsi lemmikuid, seostades lemmikud Motivations tabeliga
         const favorites = await db.favorites.findAll({

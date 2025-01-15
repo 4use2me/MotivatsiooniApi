@@ -86,17 +86,25 @@
         @motivationUpdated="onMotivationUpdated"
         @cancelEdit="cancelEditingMotivation"
       />
+      <div>
+        <div>
+          <button class="btn data me-3" @click="fetchFavorites(false)">Kõik lemmikud</button>
+          <button class="btn data" @click="fetchFavorites(true)">Minu lemmikud</button>
+        </div>
 
-      <!-- Favorites Table -->
-      <div style="color: black;" v-if="favorites.length">
-        <h3>Lemmikud:</h3>
-        <!-- Kasutame FavoritesTable komponenti -->
-          <FavoritesTable :items="favorites"
-          @removeFavorite="removeFavorite" />
+  
+          <!-- Favorites Table -->
+        <div style="color: black;" v-if="favorites.length">
+          <h3 v-if="viewingOwnFavorites">Minu lemmikud:</h3>
+          <h3 v-else>Kõik lemmikud:</h3>
+            <!-- Kasutame FavoritesTable komponenti -->
+          <FavoritesTable :items="favorites" @removeFavorite="removeFavorite" />
+        </div>
+        <div v-else>
+          <p>You have no favorite quotes yet.</p>
+        </div>
       </div>
-      <div v-else>
-        <p>You have no favorite quotes yet.</p>
-      </div>
+      
     </div>
   </template>
   
@@ -125,6 +133,7 @@
         sortDirection: "asc",
         motivations: [], // Motivatsioonide loend
         favorites: [], // Stores user's favorite quotes
+        viewingOwnFavorites: false,
         allUsers: [],
         showMotivationForm: false, // Motiveerimisvormi näitamine
         editingMotivation: null, // Hetkel redigeeritav motivatsioon
@@ -318,10 +327,14 @@
         }
       },
 
-      async fetchFavorites() {
+      async fetchFavorites(ownOnly = false) {
+        this.viewingOwnFavorites = ownOnly;
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch("http://localhost:8080/favorites/user", {
+        const url = ownOnly
+            ? "http://localhost:8080/favorites/user?own=true"
+            : "http://localhost:8080/favorites/user";
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
