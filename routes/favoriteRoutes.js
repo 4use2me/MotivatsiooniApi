@@ -4,6 +4,8 @@ const authenticate = require('../controllers/authMiddleware');
 module.exports = (app) => { 
     app.route("/favorites")
         .get(FavoritesController.getAll)
+    app.route("/favorites/:id")
+        .delete(FavoritesController.removeFavoriteById);
     app.route("/favorites/user")
        .post(authenticate, FavoritesController.addFavorite)
        .get(authenticate, FavoritesController.getFavorites)

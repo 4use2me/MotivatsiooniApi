@@ -101,3 +101,26 @@ exports.removeFavorite = [authenticate, async (req, res) => {
         return res.status(500).json({ error: 'Serveri viga' });
     }
 }];
+
+exports.removeFavoriteById = [async (req, res) => {
+    try {
+        const FavoriteID = parseInt(req.params.id); // Lemmiku ID, mille soovite eemaldada
+
+        // Otsi Favorite tabelist, kas see tsitaat on kasutaja lemmikute seas
+        const favorite = await db.favorites.findOne({
+            where: { FavoriteID },
+        });
+
+        if (!favorite) {
+            return res.status(404).json({ error: 'Lemmikut ei leitud' });
+        }
+
+        // Eemalda lemmik
+        await favorite.destroy();
+
+        return res.status(200).json({ message: 'Lemmik edukalt eemaldatud' });
+    } catch (error) {
+        console.error('Viga lemmiku eemaldamisel:', error);
+        return res.status(500).json({ error: 'Serveri viga' });
+    }
+}];
