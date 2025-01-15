@@ -17,6 +17,13 @@ module.exports = (sequelize, DataTypes) => {
           },
       }
   );
+  
+  User.associate = (models) => {
+    User.hasMany(models.motivations, {
+        foreignKey: 'UserID',
+        as: 'Motivations',
+    });
+};
 
   console.log(User === sequelize.models.User);
   return User;

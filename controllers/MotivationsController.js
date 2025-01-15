@@ -12,7 +12,21 @@ exports.getAll = async (req, res) => {
         const sort = req.query.sort || "asc"; // Võta sorteerimissuund päringust (vaikimisi kasvavalt)
         const motivations = await db.motivations.findAll({
             order: [["Likes", sort]], // Sorteerime meeldimiste arvu järgi
+            include: {
+                model: db.users, // Ühenda User tabeliga
+                as: 'User',
+                required: true, 
+                attributes: ['UserName'], // Useri tabelist kaasa ainult nimi
+            },
         });
+
+        const response = motivations.map(motivation => ({
+            MotivationID: motivation.MotivationID,
+            Quote: motivation.Quote,
+            Likes: motivation.Likes,
+            UserID: motivation.UserID,
+            UserName: motivation.User?.UserName, // Kaasa UserName
+        }));
 
         res.json(motivations);
     } catch (error) {
@@ -28,6 +42,12 @@ exports.getRandom = async (req, res) => {
 
         const randomMotivation = await db.motivations.findOne({
             order: db.sequelize.random(), // Randomly fetch one record
+            include: {
+                model: db.users,
+                as: 'User',
+                required: true,
+                attributes: ['UserName'],
+            },
         });
 
         console.log("Random motivation fetched:", randomMotivation);
@@ -49,6 +69,7 @@ exports.getRandom = async (req, res) => {
             Quote: randomMotivation.Quote,
             UserID: randomMotivation.UserID,
             Likes: randomMotivation.Likes,
+            UserName: randomMotivation.User?.UserName,
         });
     } catch (error) {
         console.error("Error fetching random quote:", error);

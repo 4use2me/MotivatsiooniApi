@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Motivation.associate = (models) => {
+        Motivation.belongsTo(models.users, {
+            foreignKey: 'UserID',
+            as: 'User', // Alias for easier reference in queries
+        });
+
         Motivation.hasMany(models.favorites, {
             foreignKey: 'MotivationID',
             as: 'Favorites', 

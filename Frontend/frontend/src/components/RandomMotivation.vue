@@ -104,6 +104,7 @@ export default {
 <template>
   <div v-if="randomMotivation" class="quote-container">
     <blockquote>"{{ randomMotivation.Quote }}"</blockquote>
+    <p class="author">— {{ randomMotivation.UserName || "Anonymous" }}</p>
     <div class="like-container">
       <span :class="['heart-icon', { liked: isLiked }]" @click="toggleLike">
         <i class="fas fa-heart"></i>
